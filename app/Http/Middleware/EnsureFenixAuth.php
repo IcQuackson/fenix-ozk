@@ -7,13 +7,19 @@ use Illuminate\Http\Request;
 
 final class EnsureFenixAuth
 {
-    public function __construct(private TokenProvider $tokens) {}
+    public function __construct(private TokenProvider $tokens)
+    {
+    }
 
     public function handle(Request $request, Closure $next)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+
         $userId = (int) auth()->id();
-        if (!$userId || !$this->tokens->hasValidForUser($userId)) {
-            return redirect()->route('fenix.connect'); // Implement OAuth connect later
+        if (!$this->tokens->hasValidForUser($userId)) {
+            return redirect()->route('fenix.connect');
         }
         return $next($request);
     }

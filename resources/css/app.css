@@ -1,11 +1,84 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* -----------------------------
+   Klavika webfont (local .otf)
+   Files placed in: public/fonts/klavika/
+   Available weights in your set:
+   - Light (300)            -> klavika-light.otf
+   - Light Italic (300i)    -> klavika-light-italic.otf
+   - Medium (500)           -> klavika-medium.otf
+   - Medium Italic (500i)   -> klavika-medium-italic.otf
+   - Bold (700)             -> klavika-bold.otf
+   - Bold Italic (700i)     -> klavika-bold-italic.otf
+   (No upright Regular 400 present; we’ll map Tailwind “normal” to 500.)
+-------------------------------- */
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Light"),
+		url("/fonts/klavika/klavika-light.otf") format("opentype");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Light Italic"),
+		url("/fonts/klavika/klavika-light-italic.otf") format("opentype");
+	font-weight: 300;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Medium"),
+		url("/fonts/klavika/klavika-medium.otf") format("opentype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Medium Italic"),
+		url("/fonts/klavika/klavika-medium-italic.otf") format("opentype");
+	font-weight: 500;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Bold"),
+		url("/fonts/klavika/klavika-bold.otf") format("opentype");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Klavika";
+	src:
+		local("Klavika Bold Italic"),
+		url("/fonts/klavika/klavika-bold-italic.otf") format("opentype");
+	font-weight: 700;
+	font-style: italic;
+	font-display: swap;
+}
+
+/* Make Klavika the default sans and prefer Medium (500) as “normal” text.
+   (We also change Tailwind’s font weights in tailwind.config.js.) */
+@layer base {
+	html {
+		font-family: "Klavika", Arial, Helvetica, sans-serif;
+	}
 }
