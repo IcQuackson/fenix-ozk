@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.ico') }}" />
+	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 	<title>@yield('title', 'IST Fenix')</title>
 
 	<!-- Tailwind via Vite (preferred) -->
@@ -32,10 +32,10 @@
 		<!-- Sidebar -->
 		<aside class="w-64 bg-slate-900 border-r border-slate-800 p-4">
 			<div class="flex items-center gap-2 mb-6">
-				<img src="{{ asset('images/favicon.ico') }}" alt="IST Fenix Logo" class="h-8 w-8 rounded-md">
+				<img src="{{ asset('favicon.ico') }}" alt="IST Fenix Logo" class="h-8 w-8 rounded-md">
 				<div>
-					<div class="font-semibold">IST Fenix 2.0</div>
-					<div class="text-xs text-slate-400">O Fenix que quer o teu sucesso</div>
+					<div class="font-semibold">Fénix OZK</div>
+					<div class="text-xs text-slate-400">O Fénix que quer o teu sucesso</div>
 				</div>
 			</div>
 			<nav class="space-y-1 text-slate-300">

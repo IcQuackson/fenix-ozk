@@ -1,0 +1,1280 @@
+openapi: 3.1.0
+info:
+  title: FenixEdu Public API
+  version: "1.2.0"
+  description: |
+    OpenAPI specification derived from the provided FenixEdu API documentation.
+
+    **Scope & availability**
+    - Applicable to all FenixEdu installations as of **v1.2.0**.
+    - Availability and access control may vary per institution. Check your local instance.
+
+    **Localization**
+    - All endpoints accept an optional `lang` query parameter. If present and supported,
+      responses are localized; otherwise, the default language is used.
+    - Available languages are returned by `GET /about`.
+
+    **Security**
+    - The original text does not describe authentication details. This spec marks endpoints under `/person` as **private** and attaches a generic Bearer token scheme. Replace or extend the security scheme to match your deployment (e.g., OAuth2 Authorization Code).
+
+servers:
+  - url: https://{host}/api/fenix/v1
+    description: Default production server
+    variables:
+      host:
+        default: fenix.tecnico.ulisboa.pt
+
+security:
+  - {}
+
+tags:
+  - name: About
+    description: Institution metadata & languages.
+  - name: Academic Terms
+    description: Terms usable across other endpoints.
+  - name: Contacts & Facilities
+    description: Contacts, canteen menu, parking, shuttle.
+  - name: Degrees
+    description: Degree and program information.
+  - name: Courses
+    description: Course catalog and course-specific data.
+  - name: Domain Model
+    description: Application domain model (DML representation).
+  - name: People (Private)
+    description: Endpoints under /person that require user authorization.
+  - name: Spaces
+    description: Campi, buildings, floors, rooms.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Placeholder Bearer token scheme. Replace with your installation's auth (e.g., OAuth2).
+  parameters:
+    Lang:
+      name: lang
+      in: query
+      description: BCP 47 language tag. If supported, localizes the response.
+      required: false
+      schema:
+        type: string
+        example: en-US
+    AcademicTerm:
+      name: academicTerm
+      in: query
+      description: One of the terms returned by `/academicterms`.
+      required: false
+      schema:
+        type: string
+        example: "2013/2014"
+    Day:
+      name: day
+      in: query
+      description: Day to filter room events, in `dd/MM/yyyy` format.
+      required: false
+      schema:
+        type: string
+        pattern: "^\n?\n?\n?\n?\n?\n?\n?(?:0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$"
+        example: 21/02/2014
+    FormatCalendarJson:
+      name: format
+      in: query
+      description: Response format for calendar endpoints.
+      required: false
+      schema:
+        type: string
+        enum: [calendar, json]
+        default: json
+    EnrolYesNo:
+      name: enrol
+      in: query
+      description: Enrol or disenrol from a written evaluation.
+      required: true
+      schema:
+        type: string
+        enum: [yes, no]
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    RssFeed:
+      type: object
+      properties:
+        description:
+          type: string
+        url:
+          type: string
+    AboutResponse:
+      type: object
+      properties:
+        institutionName:
+          type: string
+        institutionUrl:
+          type: string
+        rssFeeds:
+          type: array
+          items:
+            $ref: "#/components/schemas/RssFeed"
+        rss:
+          type: object
+          properties:
+            news: { type: string }
+            events: { type: string }
+        currentAcademicTerm:
+          type: string
+        languages:
+          type: array
+          items: { type: string }
+        language:
+          type: string
+      example:
+        institutionName: Instituto Superior Técnico
+        institutionUrl: ""
+        rssFeeds:
+          - description: News
+            url: ""
+          - description: Events
+            url: ""
+        rss:
+          news: ""
+          events: ""
+        currentAcademicTerm: "1ºSemestre 2013/2014"
+        languages: [en-US, pt-PT]
+        language: pt-PT
+
+    AcademicTermsResponse:
+      description: Map of academic years to available terms.
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+      example:
+        2013/2014: ["2º Semestre 2013/2014", "1ºSemestre 2013/2014"]
+        2012/2013: ["2 Semestre 2012/2013", "1 Semestre 2012/2013"]
+
+    CanteenItem:
+      type: object
+      properties:
+        menu: { type: string }
+        name: { type: string }
+        type: { type: string }
+    CanteenMeal:
+      type: object
+      properties:
+        info:
+          type: array
+          items: { $ref: "#/components/schemas/CanteenItem" }
+        type: { type: string, description: Meal type (e.g., Almoço/Jantar) }
+    CanteenDay:
+      type: object
+      properties:
+        day: { type: string }
+        meal:
+          type: array
+          items: { $ref: "#/components/schemas/CanteenMeal" }
+
+    Contact:
+      type: object
+      properties:
+        name: { type: string }
+        fax: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        address: { type: string }
+        postalCode: { type: string }
+        workingHours: { type: string }
+
+    TopLevelSpaceRef:
+      type: object
+      properties:
+        type: { type: string, enum: [CAMPUS] }
+        id: { type: string }
+        name: { type: string }
+
+    RoomRef:
+      type: object
+      properties:
+        type: { type: string, enum: [ROOM] }
+        id: { type: string }
+        name: { type: string }
+        topLevelSpace:
+          $ref: "#/components/schemas/TopLevelSpaceRef"
+        description: { type: string, nullable: true }
+        capacity:
+          type: object
+          properties:
+            examCapacity: { type: integer, nullable: true }
+            normalCapacity: { type: integer, nullable: true }
+            normal: { type: integer, nullable: true }
+            exam: { type: integer, nullable: true }
+
+    CourseTeacher:
+      type: object
+      properties:
+        name: { type: string }
+        istId: { type: string }
+        mails:
+          type: array
+          items: { type: string }
+        urls:
+          type: array
+          items: { type: string }
+
+    BibliographicReference:
+      type: object
+      properties:
+        author: { type: string }
+        reference: { type: string }
+        title: { type: string }
+        year: { type: string }
+        type: { type: string }
+        url: { type: string, nullable: true }
+
+    DegreeRef:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        acronym: { type: string }
+
+    CourseCompetence:
+      type: object
+      properties:
+        id: { type: string }
+        program: { type: string }
+        bibliographicReferences:
+          type: array
+          items: { $ref: "#/components/schemas/BibliographicReference" }
+        degrees:
+          type: array
+          items: { $ref: "#/components/schemas/DegreeRef" }
+
+    Course:
+      type: object
+      properties:
+        acronym: { type: string }
+        name: { type: string }
+        academicTerm: { type: string }
+        evaluationMethod: { type: string, nullable: true }
+        numberOfAttendingStudents: { type: integer, nullable: true }
+        announcementLink: { type: string, nullable: true }
+        summaryLink: { type: string, nullable: true }
+        url: { type: string, nullable: true }
+        competences:
+          type: array
+          items: { $ref: "#/components/schemas/CourseCompetence" }
+        teachers:
+          type: array
+          items: { $ref: "#/components/schemas/CourseTeacher" }
+
+    DateRange:
+      type: object
+      properties:
+        start: { type: string }
+        end: { type: string }
+
+    Evaluation:
+      type: object
+      properties:
+        id: { type: string, nullable: true }
+        type:
+          {
+            type: string,
+            enum: [TEST, EXAM, PROJECT, ONLINE_TEST, AD_HOC],
+            nullable: true,
+          }
+        name: { type: string }
+        evaluationPeriod: { $ref: "#/components/schemas/DateRange" }
+        enrollmentPeriod:
+          { $ref: "#/components/schemas/DateRange", nullable: true }
+        isInEnrolmentPeriod: { type: boolean, nullable: true }
+        isEnrolled: { type: boolean, nullable: true }
+        rooms:
+          type: array
+          items: { $ref: "#/components/schemas/RoomRef" }
+        assignedRoom:
+          allOf:
+            - $ref: "#/components/schemas/RoomRef"
+            - nullable: true
+        courses:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              acronym: { type: string }
+              name: { type: string }
+              academicTerm: { type: string }
+              url: { type: string }
+
+    Group:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        enrolmentPeriod: { $ref: "#/components/schemas/DateRange" }
+        enrolmentPolicy: { type: string, enum: [ATOMIC, INDIVIDUAL] }
+        minimumCapacity: { type: integer }
+        maximumCapacity: { type: integer }
+        idealCapacity: { type: integer }
+        associatedCourses:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              id: { type: string }
+              degrees:
+                type: array
+                items: { $ref: "#/components/schemas/DegreeRef" }
+
+    CourseLoad:
+      type: object
+      properties:
+        type: { type: string }
+        totalQuantity: { type: number }
+        unitQuantity: { type: number }
+
+    Lesson:
+      type: object
+      properties:
+        start: { type: string }
+        end: { type: string }
+        room: { $ref: "#/components/schemas/RoomRef" }
+
+    Shift:
+      type: object
+      properties:
+        name: { type: string }
+        types:
+          type: array
+          items: { type: string }
+        occupation:
+          type: object
+          properties:
+            current: { type: integer }
+            max: { type: integer }
+        lessons:
+          type: array
+          items: { $ref: "#/components/schemas/Lesson" }
+        rooms:
+          type: array
+          items: { $ref: "#/components/schemas/RoomRef" }
+
+    CourseSchedule:
+      type: object
+      properties:
+        lessonPeriods:
+          type: array
+          items: { $ref: "#/components/schemas/DateRange" }
+        courseLoads:
+          type: array
+          items: { $ref: "#/components/schemas/CourseLoad" }
+        shifts:
+          type: array
+          items: { $ref: "#/components/schemas/Shift" }
+
+    CourseStudents:
+      type: object
+      properties:
+        enrolmentCount: { type: integer }
+        attendingCount: { type: integer }
+        students:
+          type: array
+          items:
+            type: object
+            properties:
+              username: { type: string }
+              degree: { $ref: "#/components/schemas/DegreeRef" }
+
+    Degree:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        acronym: { type: string }
+        academicTerms:
+          type: array
+          items: { type: string }
+        academicTerm: { type: string, nullable: true }
+        currentAcademicTerm: { type: string, nullable: true }
+        type: { type: string }
+        typeName: { type: string }
+        url: { type: string }
+        campus:
+          type: array
+          items:
+            type: object
+            properties:
+              type: { type: string, enum: [CAMPUS] }
+              id: { type: string }
+              name: { type: string }
+        info:
+          type: object
+          properties:
+            description: { type: string }
+            objectives: { type: string }
+            designFor: { type: string }
+            requisites: { type: string }
+            profissionalExits: { type: string }
+            history: { type: string }
+            operationRegime: { type: string }
+            gratuity: { type: string }
+            links: { type: string }
+        teachers:
+          type: array
+          items: { $ref: "#/components/schemas/CourseTeacher" }
+
+    DegreeCourse:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        acronym: { type: string }
+        credits: { type: string }
+        academicTerm: { type: string }
+
+    DmlClassSlot:
+      type: object
+      properties:
+        type: { type: string }
+        name: { type: string }
+        modifiers:
+          type: array
+          items: { type: string }
+        options:
+          type: array
+          items: { type: string }
+
+    DmlClass:
+      type: object
+      properties:
+        className: { type: string }
+        interfaces:
+          type: array
+          items: { type: string }
+        modifiers:
+          type: array
+          items: { type: string }
+        slots:
+          type: array
+          items: { $ref: "#/components/schemas/DmlClassSlot" }
+
+    DmlRelationRole:
+      type: object
+      properties:
+        type: { type: string }
+        name: { type: string }
+        modifiers:
+          type: array
+          items: { type: string }
+        multiplicityLower: { type: string }
+        multiplicityUpper: { type: string }
+
+    DmlRelation:
+      type: object
+      properties:
+        name: { type: string }
+        roles:
+          type: array
+          items: { $ref: "#/components/schemas/DmlRelationRole" }
+
+    DomainModelResponse:
+      type: object
+      properties:
+        classes:
+          type: array
+          items: { $ref: "#/components/schemas/DmlClass" }
+        relations:
+          type: array
+          items: { $ref: "#/components/schemas/DmlRelation" }
+
+    ParkingSite:
+      type: object
+      properties:
+        address: { type: string }
+        campus: { type: string }
+        description: { type: string }
+        freeSlots: { type: integer }
+        latlng: { type: string }
+        name: { type: string }
+        total: { type: integer }
+        updated: { type: string }
+        workingHours: { type: string }
+
+    ParkingResponse:
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/ParkingSite"
+
+    PersonRoleTeacher:
+      type: object
+      properties:
+        type: { type: string, enum: [TEACHER] }
+        department:
+          type: object
+          properties:
+            name: { type: string }
+            acronym: { type: string }
+    PersonRoleStudent:
+      type: object
+      properties:
+        type: { type: string, enum: [STUDENT] }
+        registrations:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              acronym: { type: string }
+              id: { type: string }
+              academicTerms:
+                type: array
+                items: { type: string }
+    PersonRoleAlumni:
+      type: object
+      properties:
+        type: { type: string, enum: [ALUMNI] }
+        concludedRegistrations:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              acronym: { type: string }
+              id: { type: string }
+              academicTerms:
+                type: array
+                items: { type: string }
+    Person:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/PersonRoleTeacher"
+              - $ref: "#/components/schemas/PersonRoleStudent"
+              - $ref: "#/components/schemas/PersonRoleAlumni"
+        campus: { type: string }
+        photo:
+          type: object
+          properties:
+            type: { type: string }
+            data: { type: string, description: Base64 image data }
+        name: { type: string }
+        gender: { type: string }
+        birthday: { type: string }
+        username: { type: string }
+        email: { type: string }
+        personalEmails:
+          type: array
+          items: { type: string }
+        workEmails:
+          type: array
+          items: { type: string }
+        webAddresses:
+          type: array
+          items: { type: string }
+        workWebAddresses:
+          type: array
+          items: { type: string }
+
+    CalendarCourseRef:
+      type: object
+      properties:
+        acronym: { type: string }
+        name: { type: string }
+        academicTerm: { type: string }
+        url: { type: string }
+        id: { type: string }
+
+    CalendarClassEvent:
+      type: object
+      properties:
+        classPeriod: { $ref: "#/components/schemas/DateRange" }
+        location:
+          type: array
+          items: { $ref: "#/components/schemas/RoomRef" }
+        title: { type: string }
+        course: { $ref: "#/components/schemas/CalendarCourseRef" }
+
+    CalendarEvaluationEvent:
+      type: object
+      properties:
+        evaluationPeriod: { $ref: "#/components/schemas/DateRange" }
+        location:
+          type: array
+          items: { $ref: "#/components/schemas/RoomRef" }
+        title: { type: string }
+        course:
+          { $ref: "#/components/schemas/CalendarCourseRef", nullable: true }
+        courses:
+          type: array
+          items: { $ref: "#/components/schemas/CalendarCourseRef" }
+
+    PersonCoursesResponse:
+      type: object
+      properties:
+        enrolments:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              acronym: { type: string }
+              name: { type: string }
+              academicTerm: { type: string }
+              url: { type: string }
+              grade: { type: string, nullable: true }
+        teaching:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              acronym: { type: string }
+              name: { type: string }
+              academicTerm: { type: string }
+              url: { type: string }
+
+    CurriculumApprovedCourse:
+      type: object
+      properties:
+        course:
+          type: object
+          properties:
+            name: { type: string }
+            id: { type: string }
+            acronym: { type: string }
+            academicTerm: { type: string }
+            url: { type: string }
+        grade: { type: string }
+        ects: { type: number }
+
+    PersonCurriculumItem:
+      type: object
+      properties:
+        degree: { $ref: "#/components/schemas/DegreeRef" }
+        start: { type: string }
+        end: { type: string, nullable: true }
+        credits: { type: number }
+        average: { type: number }
+        calculatedAverage: { type: number }
+        isFinished: { type: boolean }
+        numberOfApprovedCourses: { type: integer }
+        currentYear: { type: integer }
+        approvedCourses:
+          type: array
+          items: { $ref: "#/components/schemas/CurriculumApprovedCourse" }
+
+    PaymentsResponse:
+      type: object
+      properties:
+        completed:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              amount: { type: string }
+              type: { type: string }
+              description: { type: string }
+              date: { type: string }
+        pending:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              description: { type: string }
+              paymentPeriod: { $ref: "#/components/schemas/DateRange" }
+              entity: { type: string }
+              reference: { type: string }
+              amount: { type: string }
+
+    ShuttleStation:
+      type: object
+      properties:
+        name: { type: string }
+        address: { type: string }
+        latlng: { type: string }
+
+    ShuttleDate:
+      type: object
+      properties:
+        start: { type: string }
+        end: { type: string }
+        type: { type: string, enum: [weekday, holidays] }
+
+    ShuttleTripStop:
+      type: object
+      properties:
+        hour: { type: string }
+        station: { type: string }
+
+    ShuttleTrip:
+      type: object
+      properties:
+        type: { type: string, enum: [weekday, holidays] }
+        stations:
+          type: array
+          items: { $ref: "#/components/schemas/ShuttleTripStop" }
+
+    ShuttleResponse:
+      type: object
+      properties:
+        stations:
+          type: array
+          items: { $ref: "#/components/schemas/ShuttleStation" }
+        date:
+          type: array
+          items: { $ref: "#/components/schemas/ShuttleDate" }
+        trips:
+          type: array
+          items: { $ref: "#/components/schemas/ShuttleTrip" }
+
+    SpaceSummary:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        type: { type: string, enum: [CAMPUS, BUILDING, FLOOR, ROOM] }
+
+    SpaceDetail:
+      type: object
+      properties:
+        type: { type: string }
+        id: { type: string }
+        name: { type: string }
+        topLevelSpace: { $ref: "#/components/schemas/TopLevelSpaceRef" }
+        containedSpaces:
+          type: array
+          items: { $ref: "#/components/schemas/SpaceSummary" }
+        parentSpace:
+          type: object
+          properties:
+            type: { type: string }
+            id: { type: string }
+            name: { type: string }
+            topLevelSpace: { $ref: "#/components/schemas/TopLevelSpaceRef" }
+        description: { type: string }
+        capacity:
+          type: object
+          properties:
+            normal: { type: integer }
+            exam: { type: integer }
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              type: { type: string }
+              start: { type: string }
+              end: { type: string }
+              weekday: { type: string }
+              day: { type: string }
+              period: { $ref: "#/components/schemas/DateRange" }
+              info: { type: string }
+              course:
+                type: object
+                properties:
+                  id: { type: string }
+                  acronym: { type: string }
+                  name: { type: string }
+                  academicTerm: { type: string }
+                  url: { type: string }
+
+paths:
+  /about:
+    get:
+      tags: [About]
+      summary: Get institution metadata, RSS feeds, languages, and current term.
+      operationId: getAbout
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AboutResponse" }
+      description: Public endpoint.
+
+  /academicterms:
+    get:
+      tags: [Academic Terms]
+      summary: List all academic terms.
+      operationId: listAcademicTerms
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AcademicTermsResponse" }
+      description: Public endpoint.
+
+  /canteen:
+    get:
+      tags: [Contacts & Facilities]
+      summary: Get Alameda canteen menu.
+      operationId: getCanteenMenu
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/CanteenDay" }
+      description: Public endpoint.
+
+  /contacts:
+    get:
+      tags: [Contacts & Facilities]
+      summary: Get institutional contacts.
+      operationId: getContacts
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Contact" }
+      description: Public endpoint.
+
+  /courses/{id}:
+    get:
+      tags: [Courses]
+      summary: Get course details by ID.
+      operationId: getCourseById
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Course" }
+      description: Public endpoint.
+
+  /courses/{id}/evaluations:
+    get:
+      tags: [Courses]
+      summary: List evaluations for a course.
+      operationId: listCourseEvaluations
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Evaluation" }
+      description: Public endpoint.
+
+  /courses/{id}/groups:
+    get:
+      tags: [Courses]
+      summary: List groups for a course.
+      operationId: listCourseGroups
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Group" }
+      description: Public endpoint.
+
+  /courses/{id}/schedule:
+    get:
+      tags: [Courses]
+      summary: Get schedule for a course.
+      operationId: getCourseSchedule
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CourseSchedule" }
+      description: Public endpoint.
+
+  /courses/{id}/students:
+    get:
+      tags: [Courses]
+      summary: List students attending a course.
+      operationId: listCourseStudents
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CourseStudents" }
+      description: Public endpoint.
+
+  /degrees:
+    get:
+      tags: [Degrees]
+      summary: List degrees.
+      operationId: listDegrees
+      parameters:
+        - $ref: "#/components/parameters/AcademicTerm"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Degree" }
+      description: Public endpoint.
+
+  /degrees/{id}:
+    get:
+      tags: [Degrees]
+      summary: Get degree by ID.
+      operationId: getDegreeById
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/AcademicTerm"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Degree" }
+      description: Public endpoint.
+
+  /degrees/{id}/courses:
+    get:
+      tags: [Degrees]
+      summary: List courses for a degree.
+      operationId: listDegreeCourses
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/AcademicTerm"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/DegreeCourse" }
+      description: Public endpoint.
+
+  /domainModel:
+    get:
+      tags: [Domain Model]
+      summary: Get the application's domain model (DML) representation.
+      operationId: getDomainModel
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DomainModelResponse" }
+      description: Public endpoint.
+
+  /parking:
+    get:
+      tags: [Contacts & Facilities]
+      summary: Get parking information.
+      operationId: getParking
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ParkingResponse" }
+      description: Public endpoint.
+
+  /person:
+    get:
+      tags: [People (Private)]
+      summary: Get the current person's information.
+      operationId: getPerson
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Person" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/calendar/classes:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's class calendar.
+      operationId: getPersonCalendarClasses
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/FormatCalendarJson"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  academicTerm: { type: string }
+                  events:
+                    type: array
+                    items: { $ref: "#/components/schemas/CalendarClassEvent" }
+            text/calendar:
+              schema:
+                type: string
+                description: iCalendar (ICS) payload
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/calendar/evaluations:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's evaluation calendar.
+      operationId: getPersonCalendarEvaluations
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/FormatCalendarJson"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  academicTerm: { type: string }
+                  events:
+                    type: array
+                    items:
+                      { $ref: "#/components/schemas/CalendarEvaluationEvent" }
+            text/calendar:
+              schema:
+                type: string
+                description: iCalendar (ICS) payload
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/courses:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's courses.
+      operationId: getPersonCourses
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AcademicTerm"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PersonCoursesResponse" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/curriculum:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's complete curriculum (students only).
+      operationId: getPersonCurriculum
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PersonCurriculumItem" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/evaluations:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's written evaluations.
+      operationId: getPersonEvaluations
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Evaluation" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/evaluations/{id}:
+    put:
+      tags: [People (Private)]
+      summary: Enrol or disenrol from a written evaluation by ID.
+      operationId: updatePersonEvaluationEnrolment
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/EnrolYesNo"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK (returns the same shape as `GET /person/evaluations`).
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Evaluation" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /person/payments:
+    get:
+      tags: [People (Private)]
+      summary: Get the user's payments information.
+      operationId: getPersonPayments
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentsResponse" }
+        "401": { description: Unauthorized }
+      description: Private endpoint (requires user authorization).
+
+  /shuttle:
+    get:
+      tags: [Contacts & Facilities]
+      summary: Get shuttle information.
+      operationId: getShuttle
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ShuttleResponse" }
+      description: Public endpoint.
+
+  /spaces:
+    get:
+      tags: [Spaces]
+      summary: List campi.
+      operationId: listSpaces
+      parameters:
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/SpaceSummary" }
+      description: Public endpoint.
+
+  /spaces/{id}:
+    get:
+      tags: [Spaces]
+      summary: Get a space by ID (campus, building, floor, or room).
+      operationId: getSpaceById
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - $ref: "#/components/parameters/Day"
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SpaceDetail" }
+      description: Public endpoint.
+
+  /spaces/{id}/blueprint:
+    get:
+      tags: [Spaces]
+      summary: Get a space's blueprint.
+      operationId: getSpaceBlueprint
+      parameters:
+        - $ref: "#/components/parameters/Id"
+        - name: format
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [jpeg, dwg]
+          description: Desired output format.
+        - $ref: "#/components/parameters/Lang"
+      responses:
+        "200":
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            application/dwg:
+              schema:
+                type: string
+                format: binary
+      description: Public endpoint.

@@ -5,18 +5,26 @@ final class Course
 {
     public function __construct(
         public string $id,
+        public string $acronym,
         public string $name,
-        public float $ects,
-    ) {}
+        public string $academicTerm,
+        public ?float $ects,
+    ) {
+    }
 
-    public static function fromArray(array $r): self
+    public static function fromApi(array $raw): self
     {
         return new self(
-            (string)($r['id'] ?? $r['courseId'] ?? ''),
-            (string)($r['acronym'] ?? $r['name'] ?? 'N/A'),
-            (float)($r['ects'] ?? 0),
+            $raw['id'] ?? '',
+            $raw['acronym'] ?? '',
+            $raw['name'] ?? '',
+            $raw['academicTerm'] ?? '',
+            isset($raw['ects']) ? (float) $raw['ects'] : null,
         );
     }
 
-    public function isHeavy(): bool { return $this->ects >= 6.0; }
+    public function isHeavy(): bool
+    {
+        return ($this->ects ?? 0) >= 6.0;
+    }
 }

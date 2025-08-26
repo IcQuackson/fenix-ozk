@@ -1,11 +1,15 @@
 <?php
-
 namespace App\Application;
 
 use App\Contracts\FenixPort;
-use App\Domain\Entities\Course;
+use App\Domain\Entities\{
+	Course,
+	CourseEvaluation,
+	CourseGroup,
+	CourseSchedule,
+	CourseStudent
+};
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Illuminate\Support\Carbon;
 
 final class CourseService
 {
@@ -15,34 +19,67 @@ final class CourseService
 	) {
 	}
 
-	/** @return Course[] */
-	public function listUserCourses(int $userId): array
+	public function getCourse(string $id): Course
 	{
-		$key = "courses:{$userId}:v1";
-		$lockKey = "lock:courses:{$userId}";
-		$ttl = Carbon::now()->addMinutes(5);
+		$key = "course:{$id}:v1";
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			fn() =>
+			$this->fenix->getCourseById($id)
+		);
+		return Course::fromApi($raw);
+	}
 
-		// 1) Fast path
-		if ($cached = $this->cache->get($key)) {
-			/** @var Course[] $cached */
-			return $cached;
-		}
+	/** @return CourseEvaluation[] */
+	public function listEvaluations(string $id): array
+	{
+		$key = "course:{$id}:evaluations:v1";
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			fn() =>
+			$this->fenix->listCourseEvaluations($id)
+		);
+		return array_map(fn($r) => CourseEvaluation::fromApi($r), $raw);
+	}
 
-		// 2) Slow path with stampede protection
-		$lock = $this->cache->lock($lockKey, 10); // lock expires after 10s
-		return $lock->block(5, function () use ($key, $ttl, $userId) {
-			// Re-check inside the lock (another request may have filled it)
-			if ($cached = $this->cache->get($key)) {
-				return $cached;
-			}
+	/** @return CourseGroup[] */
+	public function listGroups(string $id): array
+	{
+		$key = "course:{$id}:groups:v1";
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			fn() =>
+			$this->fenix->listCourseGroups($id)
+		);
+		return array_map(fn($r) => CourseGroup::fromApi($r), $raw);
+	}
 
-			// Heavy recompute / remote calls
-			$raw = $this->fenix->listCourses($userId);
-			$courses = array_map(fn($r) => Course::fromArray($r), $raw);
+	/** @return CourseSchedule[] */
+	public function getSchedule(string $id): array
+	{
+		$key = "course:{$id}:schedule:v1";
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			fn() =>
+			$this->fenix->getCourseSchedule($id)
+		);
+		return array_map(fn($r) => CourseSchedule::fromApi($r), $raw);
+	}
 
-			// Save & return
-			$this->cache->put($key, $courses, $ttl);
-			return $courses;
-		});
+	/** @return CourseStudent[] */
+	public function listStudents(string $id): array
+	{
+		$key = "course:{$id}:students:v1";
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			fn() =>
+			$this->fenix->listCourseStudents($id)
+		);
+		return array_map(fn($r) => CourseStudent::fromApi($r), $raw);
 	}
 }

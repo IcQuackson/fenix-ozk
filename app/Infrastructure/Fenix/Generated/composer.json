@@ -1,0 +1,38 @@
+{
+    "description": "OpenAPI specification derived from the provided FenixEdu API documentation.  **Scope & availability** - Applicable to all FenixEdu installations as of **v1.2.0**. - Availability and access control may vary per institution. Check your local instance.  **Localization** - All endpoints accept an optional `lang` query parameter. If present and supported,   responses are localized; otherwise, the default language is used. - Available languages are returned by `GET /about`.  **Security** - The original text does not describe authentication details. This spec marks endpoints under `/person` as **private** and attaches a generic Bearer token scheme. Replace or extend the security scheme to match your deployment (e.g., OAuth2 Authorization Code).",
+    "keywords": [
+        "openapitools",
+        "openapi-generator",
+        "openapi",
+        "php",
+        "sdk",
+        "rest",
+        "api"
+    ],
+    "homepage": "https://openapi-generator.tech",
+    "license": "unlicense",
+    "authors": [
+        {
+            "name": "OpenAPI",
+            "homepage": "https://openapi-generator.tech"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "guzzlehttp/guzzle": "^7.3",
+        "guzzlehttp/psr7": "^1.7 || ^2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0 || ^9.0",
+        "friendsofphp/php-cs-fixer": "^3.5"
+    },
+    "autoload": {
+        "psr-4": { "OpenAPI\\Client\\" : "lib/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "OpenAPI\\Client\\Test\\" : "test/" }
+    }
+}
