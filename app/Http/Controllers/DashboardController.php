@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Application\DashboardService;
 use Illuminate\Contracts\View\View;
+use App\ViewModels\NextEvaluationsVM;
 
 final class DashboardController extends Controller
 {
@@ -13,6 +14,14 @@ final class DashboardController extends Controller
     public function index(): View
     {
         $summary = $this->svc->summaryForUser((int) auth()->id());
-        return view('dashboard.index', ['summary' => $summary]);
+        $vm = NextEvaluationsVM::fromDomain($summary['evaluations']);
+
+        return view('dashboard.index', [
+            'summary' => [
+                'me' => $summary['me'],
+                'ectsSum' => $summary['ectsSum'],
+                'evaluations' => $vm->toArray(),
+            ],
+        ]);
     }
 }

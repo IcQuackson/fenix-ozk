@@ -16,6 +16,7 @@ final class CourseEvaluation
 		public ?bool $isEnrolled,
 		public array $rooms,
 		public ?RoomRef $assignedRoom,
+		public Course $course,
 	) {
 	}
 
@@ -43,6 +44,9 @@ final class CourseEvaluation
 			$rooms,
 			isset($raw['assignedRoom']) && is_array($raw['assignedRoom'])
 			? RoomRef::fromApi($raw['assignedRoom'])
+			: null,
+			isset($raw['courses'][0])
+			? Course::fromApi($raw['courses'][0])
 			: null,
 		);
 	}

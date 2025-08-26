@@ -21,8 +21,7 @@ final class CourseVM
 			'acronym' => $this->course->acronym,
 			'name' => $this->course->name,
 			'term' => $this->course->academicTerm,
-			'ects' => $this->course->ects,
-			'is_heavy' => $this->course->isHeavy(),
+			'url' => $this->course->url,
 		];
 	}
 }

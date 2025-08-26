@@ -19,9 +19,15 @@ final class NextEvaluationsVM
     public function toArray(): array
     {
         return array_map(fn(CourseEvaluation $e) => [
-            'course' => $e->course,
+            'course' => $e->course->name,
             'name' => $e->name,
-            'exam_at' => $e->examAt?->format('Y-m-d H:i'),
+            'exam_at' => sprintf(
+                '%s %s - %s',
+                $e->evaluationPeriod->start->format('d/m/Y'),
+                $e->evaluationPeriod->start->format('H:i'),
+                $e->evaluationPeriod->end->format('H:i')
+            ),
+            'room' => $e->assignedRoom?->name,
         ], $this->evaluations);
     }
 }

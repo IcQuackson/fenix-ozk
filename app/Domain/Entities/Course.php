@@ -8,7 +8,7 @@ final class Course
         public string $acronym,
         public string $name,
         public string $academicTerm,
-        public ?float $ects,
+        public string $url,
     ) {
     }
 
@@ -19,12 +19,7 @@ final class Course
             $raw['acronym'] ?? '',
             $raw['name'] ?? '',
             $raw['academicTerm'] ?? '',
-            isset($raw['ects']) ? (float) $raw['ects'] : null,
+            $raw['academicTerm'] ?? '',
         );
-    }
-
-    public function isHeavy(): bool
-    {
-        return ($this->ects ?? 0) >= 6.0;
     }
 }
