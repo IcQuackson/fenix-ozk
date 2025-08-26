@@ -23,7 +23,7 @@
 
         {{-- Page Heading (section-based) --}}
         @hasSection('header')
-            <header class="bg-white shadow">
+            <header class="bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     @yield('header')
                 </div>
@@ -33,12 +33,12 @@
         {{-- Flash messages --}}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
             @if(session('success'))
-                <div role="alert" class="mb-3 rounded bg-green-100 p-3 text-green-800">
+                <div role="alert" class="mb-3 rounded-sm bg-green-100 p-3 text-green-800">
                     {{ session('success') }}
                 </div>
             @endif
             @if(session('error'))
-                <div role="alert" class="mb-3 rounded bg-red-100 p-3 text-red-800">
+                <div role="alert" class="mb-3 rounded-sm bg-red-100 p-3 text-red-800">
                     {{ session('error') }}
                 </div>
             @endif

@@ -1,8 +1,42 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/* -----------------------------
+@plugin '@tailwindcss/forms';
+@plugin 'tailwind-scrollbar';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+  --font-sans: Klavika, Arial, Helvetica, sans-serif;
+
+  --font-weight-light: 300;
+  --font-weight-normal: 500;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer utilities {
+  /* -----------------------------
    Klavika webfont (local .otf)
    Files placed in: public/fonts/klavika/
    Available weights in your set:
@@ -15,70 +49,72 @@
    (No upright Regular 400 present; we’ll map Tailwind “normal” to 500.)
 -------------------------------- */
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Light"),
-		url("/fonts/klavika/klavika-light.otf") format("opentype");
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Light'),
+      url('/fonts/klavika/klavika-light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Light Italic"),
-		url("/fonts/klavika/klavika-light-italic.otf") format("opentype");
-	font-weight: 300;
-	font-style: italic;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Light Italic'),
+      url('/fonts/klavika/klavika-light-italic.otf') format('opentype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+  }
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Medium"),
-		url("/fonts/klavika/klavika-medium.otf") format("opentype");
-	font-weight: 500;
-	font-style: normal;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Medium'),
+      url('/fonts/klavika/klavika-medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Medium Italic"),
-		url("/fonts/klavika/klavika-medium-italic.otf") format("opentype");
-	font-weight: 500;
-	font-style: italic;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Medium Italic'),
+      url('/fonts/klavika/klavika-medium-italic.otf') format('opentype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+  }
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Bold"),
-		url("/fonts/klavika/klavika-bold.otf") format("opentype");
-	font-weight: 700;
-	font-style: normal;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Bold'),
+      url('/fonts/klavika/klavika-bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
 
-@font-face {
-	font-family: "Klavika";
-	src:
-		local("Klavika Bold Italic"),
-		url("/fonts/klavika/klavika-bold-italic.otf") format("opentype");
-	font-weight: 700;
-	font-style: italic;
-	font-display: swap;
-}
+  @font-face {
+    font-family: 'Klavika';
+    src:
+      local('Klavika Bold Italic'),
+      url('/fonts/klavika/klavika-bold-italic.otf') format('opentype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+  }
 
-/* Make Klavika the default sans and prefer Medium (500) as “normal” text.
+  /* Make Klavika the default sans and prefer Medium (500) as “normal” text.
    (We also change Tailwind’s font weights in tailwind.config.js.) */
+}
+
 @layer base {
-	html {
-		font-family: "Klavika", Arial, Helvetica, sans-serif;
-	}
+  html {
+    font-family: "Klavika", Arial, Helvetica, sans-serif;
+  }
 }

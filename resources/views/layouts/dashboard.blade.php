@@ -39,13 +39,13 @@
 				</div>
 			</div>
 			<nav class="space-y-1 text-slate-300">
-				<a href="{{ route('dashboard') }}" class="block rounded px-3 py-2 hover:bg-slate-800">Dashboard</a>
-				<a href="#" class="block rounded px-3 py-2 hover:bg-slate-800">Informação
+				<a href="{{ route('dashboard') }}" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Dashboard</a>
+				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Informação
 					Pessoal</a>
-				<a href="#" class="block rounded px-3 py-2 hover:bg-slate-800">Curricular</a>
-				<a href="#" class="block rounded px-3 py-2 hover:bg-slate-800">Avaliações</a>
-				<a href="#" class="block rounded px-3 py-2 hover:bg-slate-800">Horário</a>
-				<a href="#" class="block rounded px-3 py-2 hover:bg-slate-800">Pagamentos</a>
+				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Curricular</a>
+				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Avaliações</a>
+				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Horário</a>
+				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Pagamentos</a>
 			</nav>
 		</aside>
 
