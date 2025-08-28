@@ -26,7 +26,7 @@
 
 		<section class="xl:col-span-3 mt-0">
 			<div class="flex items-center justify-between mb-2">
-				<h2 class="font-semibold">Disciplinas Este Semestre</h2>
+				<h2 class="font-semibold">Disciplinas Inscritas</h2>
 			</div>
 			@include('dashboard._current_courses')
 		</section>

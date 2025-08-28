@@ -3,13 +3,16 @@ namespace App\Application;
 
 use App\Contracts\FenixPort;
 use App\Domain\Entities\CourseEvaluation;
+use App\Domain\Entities\Course;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 final class DashboardService
 {
 	public function __construct(
 		private FenixPort $fenix,
-		private CacheRepository $cache
+		private CacheRepository $cache,
+		private PersonService $person,
+		private InstitutionService $institution,
 	) {
 	}
 
@@ -43,6 +46,10 @@ final class DashboardService
 					->values()
 					->all();
 
+				$term = $this->institution->currentAcademicTerm();
+				$courses = $this->person->getEnrolledCoursesByTerm($userId, $term);
+
+
 				return [
 					'me' => $me,
 					'ectsSum' => $ects,
@@ -51,4 +58,25 @@ final class DashboardService
 			});
 		});
 	}
+
+	/**
+	 * @return array{courses:Course[]}
+	 */
+	public function getCurrentEnrolledCourses(int $userId): array
+	{
+		$cacheKey = "dashboard:currentEnrolledCourses:{$userId}:v2";
+
+		return $this->cache->remember($cacheKey, now()->addMinutes(15), function () use ($userId) {
+			$lock = $this->cache->lock("lock:dashboard:{$userId}", 10);
+
+			return $lock->block(5, function () use ($userId) {
+
+				$courses = $this->person->getCurrentEnrolledCourses($userId);
+
+				return $courses;
+			});
+		});
+	}
+
+
 }
