@@ -19,7 +19,7 @@ final class Course
             $raw['acronym'] ?? '',
             $raw['name'] ?? '',
             $raw['academicTerm'] ?? '',
-            $raw['academicTerm'] ?? '',
+            $raw['url'] ?? '',
         );
     }
 }

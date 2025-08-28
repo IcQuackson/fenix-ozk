@@ -18,7 +18,7 @@
 				<div class="flex items-start justify-between">
 					<div>
 						<h3 class="font-semibold">
-							<a href="{{ $c['url'] }}" class="hover:underline">
+							<a href="{{ $c['url'] }}" target="_blank" class="hover:underline">
 								{{ $c['name'] }}
 							</a>
 						</h3>

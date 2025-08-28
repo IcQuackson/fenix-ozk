@@ -43,10 +43,7 @@ final class PersonService
 		$raw = $this->fenix->getPersonCourses($userId, $term);
 
 		// Log the inputs
-		Log::info('Fetching enrolled courses', [
-			'userId' => $userId,
-			'term' => $term,
-		]);
+
 
 		// Log the raw API response (array pretty-printed as JSON)
 		Log::debug('Fenix API response', [
