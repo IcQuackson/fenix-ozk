@@ -9,10 +9,10 @@
 	@include('dashboard._cards')
 
 	<div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
-		<section class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4">
+		<section class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-4
+					flex flex-col min-h-0">
 			<div class="flex items-center justify-between mb-2">
 				<h2 class="font-semibold">Últimos Anúncios</h2>
-				<button class="text-sm text-sky-400">Atualizar</button>
 			</div>
 			@include('dashboard._last_announcements')
 		</section>

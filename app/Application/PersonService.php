@@ -5,6 +5,7 @@ namespace App\Application;
 use App\Contracts\FenixPort;
 use App\Domain\Entities\CourseEvaluation;
 use App\Domain\Entities\Course;
+use App\Domain\Entities\CourseAnnouncement;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Log;
 
@@ -13,7 +14,8 @@ final class PersonService
 	public function __construct(
 		private FenixPort $fenix,
 		private CacheRepository $cache,
-		private InstitutionService $institutionService
+		private InstitutionService $institutionService,
+		private CourseService $courseService,
 	) {
 	}
 
@@ -60,4 +62,40 @@ final class PersonService
 		$term = $this->institutionService->currentAcademicTerm();
 		return $this->getEnrolledCoursesByTerm($userId, $term);
 	}
+
+	public function getCurrentCoursesAnnouncements(int $userId): array
+	{
+		$courses = $this->getCurrentEnrolledCourses($userId);
+
+		$announcements = [];
+
+		foreach ($courses as $course) {
+			try {
+				$courseAnnouncements = $this->courseService->listAnnouncements($course->id);
+
+				foreach ($courseAnnouncements as $a) {
+					$a->courseName = $course->name;
+
+					$announcements[] = $a;
+				}
+
+			} catch (\Throwable $e) {
+				// log but don't break other courses
+				\Log::warning("Failed to fetch announcements for course {$course->id}", [
+					'exception' => $e,
+				]);
+			}
+		}
+
+		// sort by publication date (descending)
+		usort(
+			$announcements,
+			function (CourseAnnouncement $a, CourseAnnouncement $b): int {
+				return $b->publishedAt->getTimestamp() <=> $a->publishedAt->getTimestamp();
+			}
+		);
+
+		return $announcements;
+	}
+
 }

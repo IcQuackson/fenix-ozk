@@ -9,6 +9,7 @@ final class Course
         public string $name,
         public string $academicTerm,
         public string $url,
+        public string $announcementLink
     ) {
     }
 
@@ -20,6 +21,7 @@ final class Course
             $raw['name'] ?? '',
             $raw['academicTerm'] ?? '',
             $raw['url'] ?? '',
+            announcementLink: $raw['announcementLink'] ?? '',
         );
     }
 }

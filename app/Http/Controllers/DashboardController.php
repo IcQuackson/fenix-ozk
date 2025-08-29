@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Application\DashboardService;
 use App\ViewModels\CurrentEnrolledCoursesVM;
+use App\ViewModels\CurrentCoursesAnnouncementsVM;
 use Illuminate\Contracts\View\View;
 use App\ViewModels\NextEvaluationsVM;
 
@@ -19,13 +20,17 @@ final class DashboardController extends Controller
         $courses = $this->svc->getCurrentEnrolledCourses((int) auth()->id());
         $coursesVM = CurrentEnrolledCoursesVM::fromDomain($courses);
 
+        $announcements = $this->svc->listAnnouncements((int) auth()->id());
+        $announcementsVM = CurrentCoursesAnnouncementsVM::fromDomain($announcements);
+
         return view('dashboard.index', [
             'summary' => [
                 'me' => $summary['me'],
                 'ectsSum' => $summary['ectsSum'],
                 'evaluations' => $vm->toArray()
             ],
-            'courses' => $coursesVM->toArray()
+            'courses' => $coursesVM->toArray(),
+            'announcements' => $announcementsVM->toArray(),
         ]);
     }
 }

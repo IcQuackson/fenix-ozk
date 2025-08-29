@@ -7,9 +7,12 @@ use App\Domain\Entities\{
 	CourseEvaluation,
 	CourseGroup,
 	CourseSchedule,
-	CourseStudent
+	CourseStudent,
+	CourseAnnouncement
 };
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Support\Facades\Log;
+
 
 final class CourseService
 {
@@ -82,4 +85,53 @@ final class CourseService
 		);
 		return array_map(fn($r) => CourseStudent::fromApi($r), $raw);
 	}
+
+	/** @return CourseAnnouncement[] */
+	public function listAnnouncements(string $id): array
+	{
+		$key = "course:{$id}:announcements:v1";
+
+		$rawXml = $this->cache->remember(
+			$key,
+			now()->addMinutes(10),
+			function () use ($id) {
+				$course = $this->getCourse($id);
+
+				if (!$course->announcementLink) {
+					return null; // no announcements
+				}
+
+				// Simple GET to RSS feed
+				$response = file_get_contents($course->announcementLink);
+
+				Log::debug("Announcement Link", [$response]);
+
+				if ($response === false) {
+					throw new \RuntimeException("Failed to fetch announcements for course {$id}");
+				}
+
+				return $response;
+			}
+		);
+
+		if (!$rawXml) {
+			return [];
+		}
+
+		$xml = new \SimpleXMLElement($rawXml);
+		$items = $xml->channel->item ?? [];
+
+		$announcements = [];
+		foreach ($items as $item) {
+			$announcements[] = CourseAnnouncement::fromRssItem($item);
+		}
+
+		foreach ($announcements as $announcement) {
+			$announcement->courseId = $id;
+		}
+
+		return $announcements;
+	}
+
+
 }

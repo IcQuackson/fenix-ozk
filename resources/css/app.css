@@ -118,3 +118,7 @@
     font-family: "Klavika", Arial, Helvetica, sans-serif;
   }
 }
+
+[x-cloak] {
+  display: none !important;
+}

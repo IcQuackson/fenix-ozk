@@ -11,8 +11,8 @@ final class DashboardService
 	public function __construct(
 		private FenixPort $fenix,
 		private CacheRepository $cache,
-		private PersonService $person,
-		private InstitutionService $institution,
+		private PersonService $personService,
+		private InstitutionService $institutionService
 	) {
 	}
 
@@ -46,8 +46,8 @@ final class DashboardService
 					->values()
 					->all();
 
-				$term = $this->institution->currentAcademicTerm();
-				$courses = $this->person->getEnrolledCoursesByTerm($userId, $term);
+				$term = $this->institutionService->currentAcademicTerm();
+				$courses = $this->personService->getEnrolledCoursesByTerm($userId, $term);
 
 
 				return [
@@ -71,12 +71,23 @@ final class DashboardService
 
 			return $lock->block(5, function () use ($userId) {
 
-				$courses = $this->person->getCurrentEnrolledCourses($userId);
-
-				return $courses;
+				return $this->personService->getCurrentEnrolledCourses($userId);
 			});
 		});
 	}
 
+	public function listAnnouncements(int $userId): array
+	{
+		$cacheKey = "dashboard:listAnnouncements:{$userId}:v2";
+
+		return $this->cache->remember($cacheKey, now()->addMinutes(15), function () use ($userId) {
+			$lock = $this->cache->lock("lock:dashboard:{$userId}", 10);
+
+			return $lock->block(5, function () use ($userId) {
+
+				return $this->personService->getCurrentCoursesAnnouncements($userId);
+			});
+		});
+	}
 
 }
