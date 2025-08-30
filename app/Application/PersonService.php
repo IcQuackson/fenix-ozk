@@ -6,6 +6,8 @@ use App\Contracts\FenixPort;
 use App\Domain\Entities\CourseEvaluation;
 use App\Domain\Entities\Course;
 use App\Domain\Entities\CourseAnnouncement;
+use App\Domain\Entities\Curriculum;
+use App\Domain\Entities\CurriculumCollection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Log;
 
@@ -43,14 +45,6 @@ final class PersonService
 	public function getEnrolledCoursesByTerm(int $userId, string $term): array
 	{
 		$raw = $this->fenix->getPersonCourses($userId, $term);
-
-		// Log the inputs
-
-
-		// Log the raw API response (array pretty-printed as JSON)
-		Log::debug('Fenix API response', [
-			'raw' => $raw,
-		]);
 
 		$courses = array_map(fn($c) => Course::fromApi($c), $raw['enrolments'] ?? []);
 
@@ -96,6 +90,23 @@ final class PersonService
 		);
 
 		return $announcements;
+	}
+
+	public function getLatestCurriculum(int $userId): ?Curriculum
+	{
+		$key = "person:{$userId}:curriculum:v1";
+
+		$raw = $this->cache->remember(
+			$key,
+			now()->addMinutes(5),
+			fn() => $this->fenix->getPersonCurriculum($userId)
+		);
+
+		// Optional debug logging (keeps parity with your other method)
+		Log::debug('Fenix API curriculum response', ['raw' => $raw]);
+
+		$collection = CurriculumCollection::fromApi(is_array($raw) ? $raw : []);
+		return $collection->latest();
 	}
 
 }

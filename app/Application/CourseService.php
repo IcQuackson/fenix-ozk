@@ -101,10 +101,8 @@ final class CourseService
 					return null; // no announcements
 				}
 
-				// Simple GET to RSS feed
+				// Get RSS feed
 				$response = file_get_contents($course->announcementLink);
-
-				Log::debug("Announcement Link", [$response]);
 
 				if ($response === false) {
 					throw new \RuntimeException("Failed to fetch announcements for course {$id}");

@@ -6,6 +6,7 @@ use App\ViewModels\CurrentEnrolledCoursesVM;
 use App\ViewModels\CurrentCoursesAnnouncementsVM;
 use Illuminate\Contracts\View\View;
 use App\ViewModels\NextEvaluationsVM;
+use App\ViewModels\CurriculumKpisVM;
 
 final class DashboardController extends Controller
 {
@@ -23,6 +24,9 @@ final class DashboardController extends Controller
         $announcements = $this->svc->listAnnouncements((int) auth()->id());
         $announcementsVM = CurrentCoursesAnnouncementsVM::fromDomain($announcements);
 
+        $kpis = $this->svc->curriculumKpis((int) auth()->id());
+        $kpisVM = CurriculumKpisVM::fromDomain($kpis);
+
         return view('dashboard.index', [
             'summary' => [
                 'me' => $summary['me'],
@@ -31,6 +35,7 @@ final class DashboardController extends Controller
             ],
             'courses' => $coursesVM->toArray(),
             'announcements' => $announcementsVM->toArray(),
+            'curriculum' => $kpisVM->toArray(),
         ]);
     }
 }

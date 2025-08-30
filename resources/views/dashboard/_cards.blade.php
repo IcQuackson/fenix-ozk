@@ -1,32 +1,38 @@
 @php
 	$cards = [
 		[
-			'label' => 'Disciplinas Inscritas',
-			'value' => $kpis['disciplines'] ?? 0,
-			'subtitle' => 'Este semestre',
+			'label' => 'ECTS Totais',
+			'value' => data_get($curriculum, 'kpis.display.totalEcts', '0'),
+			'subtitle' => 'Concluídos (62%)',
 			'subtitle_class' => 'text-emerald-400',
 		],
 		[
 			'label' => 'Média Atual',
-			'value' => $kpis['average'] ?? '—',
-			'subtitle' => 'Valores até agora',
+			'value' => data_get($curriculum, 'kpis.display.avgGrade', '—'),
+			'subtitle' => '',
 			'subtitle_class' => 'text-slate-500',
 		],
 		[
-			'label' => 'Disciplinas Aprovadas',
-			'value' => $kpis['approved_count'] ?? 0,
-			'subtitle' => 'Em ' . ($kpis['degree_total_courses_count'] ?? 0)
-				. ' (' . round(($kpis['completion_ratio'] ?? 0) * 100, 1) . '%)',
+			'label' => 'ECTS Neste Termo',
+			'value' => data_get($curriculum, 'kpis.display.ectsThisTerm', '0'),
+			'subtitle' => 'Aprovados no período atual',
 			'subtitle_class' => 'text-slate-500',
 		],
 		[
-			'label' => 'Trabalhos Pendentes',
-			'value' => $kpis['pending_work'] ?? 0,
-			'subtitle' => 'Por entregar',
+			'label' => 'Ritmo (ECTS/ano)',
+			'value' => data_get($curriculum, 'kpis.display.ectsPerYear', '—'),
+			'subtitle' => 'Estimado desde o início do curso',
 			'subtitle_class' => 'text-slate-500',
 		],
 	];
 @endphp
+
+{{-- Optional degree header --}}
+@if (data_get($curriculum, 'degree.display'))
+	<div class="mb-2 text-slate-300">
+		{{ data_get($curriculum, 'degree.display') }}
+	</div>
+@endif
 
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 	@foreach ($cards as $card)
