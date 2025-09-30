@@ -3,110 +3,125 @@
 namespace App\Application;
 
 use App\Contracts\FenixPort;
-use App\Domain\Entities\CourseEvaluation;
 use App\Domain\Entities\Course;
 use App\Domain\Entities\CourseAnnouncement;
+use App\Domain\Entities\CourseEvaluation;
 use App\Domain\Entities\Curriculum;
+use App\Domain\Entities\Person;
 use App\Domain\Entities\CurriculumCollection;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Log;
 
 final class PersonService
 {
-	public function __construct(
-		private FenixPort $fenix,
-		private CacheRepository $cache,
-		private InstitutionService $institutionService,
-		private CourseService $courseService,
-	) {
-	}
+    public function __construct(
+        private FenixPort $fenix,
+        private CacheRepository $cache,
+        private InstitutionService $institutionService,
+        private CourseService $courseService,
+    ) {}
 
-	/** @return CourseEvaluation[] */
-	public function upcomingEvaluations(int $userId): array
-	{
-		$key = "person:{$userId}:evaluations:v1";
-		$raw = $this->cache->remember(
-			$key,
-			now()->addMinutes(5),
-			fn() =>
-			$this->fenix->getPersonEvaluations($userId)
-		);
+    public function getPerson(int $userId): ?Person
+    {
+        $key = "person:{$userId}:name:v1";
 
-		$evaluations = array_map(fn($r) => CourseEvaluation::fromApi($r), $raw);
+        $raw = $this->cache->remember(
+            $key,
+            now()->addMinutes(5),
+            fn () => $this->fenix->getPerson($userId)
+        );
 
-		// sort by date, then filter only future ones
-		return collect($evaluations)
-			->filter(fn(CourseEvaluation $e) => $e->examAt && $e->examAt->isFuture())
-			->sortBy(fn(CourseEvaluation $e) => $e->examAt)
-			->values()
-			->all();
-	}
+        Log::debug('Fenix API person response', ['raw' => $raw]);
 
-	public function getEnrolledCoursesByTerm(int $userId, string $term): array
-	{
-		$raw = $this->fenix->getPersonCourses($userId, $term);
+        return is_array($raw) ? Person::fromApi($raw) : null;
+    }
 
-		$courses = array_map(fn($c) => Course::fromApi($c), $raw['enrolments'] ?? []);
+    /** @return CourseEvaluation[] */
+    public function upcomingEvaluations(int $userId): array
+    {
+        $key = "person:{$userId}:evaluations:v1";
+        $raw = $this->cache->remember(
+            $key,
+            now()->addMinutes(5),
+            fn () => $this->fenix->getPersonEvaluations($userId)
+        );
 
-		return $courses;
-	}
+        $evaluations = array_map(fn ($r) => CourseEvaluation::fromApi($r), $raw);
 
-	public function getCurrentEnrolledCourses(int $userId): array
-	{
-		$term = $this->institutionService->currentAcademicTerm();
-		return $this->getEnrolledCoursesByTerm($userId, $term);
-	}
+        // sort by date, then filter only future ones
+        return collect($evaluations)
+            ->filter(fn (CourseEvaluation $e) => $e->examAt && $e->examAt->isFuture())
+            ->sortBy(fn (CourseEvaluation $e) => $e->examAt)
+            ->values()
+            ->all();
+    }
 
-	public function getCurrentCoursesAnnouncements(int $userId): array
-	{
-		$courses = $this->getCurrentEnrolledCourses($userId);
+    public function getEnrolledCoursesByTerm(int $userId, string $term): array
+    {
+        $raw = $this->fenix->getPersonCourses($userId, $term);
 
-		$announcements = [];
+        $courses = array_map(fn ($c) => Course::fromApi($c), $raw['enrolments'] ?? []);
 
-		foreach ($courses as $course) {
-			try {
-				$courseAnnouncements = $this->courseService->listAnnouncements($course->id);
+        return $courses;
+    }
 
-				foreach ($courseAnnouncements as $a) {
-					$a->courseName = $course->name;
+    public function getCurrentEnrolledCourses(int $userId): array
+    {
+        $term = $this->institutionService->currentAcademicTerm();
 
-					$announcements[] = $a;
-				}
+        return $this->getEnrolledCoursesByTerm($userId, $term);
+    }
 
-			} catch (\Throwable $e) {
-				// log but don't break other courses
-				\Log::warning("Failed to fetch announcements for course {$course->id}", [
-					'exception' => $e,
-				]);
-			}
-		}
+    public function getCurrentCoursesAnnouncements(int $userId): array
+    {
+        $courses = $this->getCurrentEnrolledCourses($userId);
 
-		// sort by publication date (descending)
-		usort(
-			$announcements,
-			function (CourseAnnouncement $a, CourseAnnouncement $b): int {
-				return $b->publishedAt->getTimestamp() <=> $a->publishedAt->getTimestamp();
-			}
-		);
+        $announcements = [];
 
-		return $announcements;
-	}
+        foreach ($courses as $course) {
+            try {
+                $courseAnnouncements = $this->courseService->listAnnouncements($course->id);
 
-	public function getLatestCurriculum(int $userId): ?Curriculum
-	{
-		$key = "person:{$userId}:curriculum:v1";
+                foreach ($courseAnnouncements as $a) {
+                    $a->courseName = $course->name;
 
-		$raw = $this->cache->remember(
-			$key,
-			now()->addMinutes(5),
-			fn() => $this->fenix->getPersonCurriculum($userId)
-		);
+                    $announcements[] = $a;
+                }
 
-		// Optional debug logging (keeps parity with your other method)
-		Log::debug('Fenix API curriculum response', ['raw' => $raw]);
+            } catch (\Throwable $e) {
+                // log but don't break other courses
+                \Log::warning("Failed to fetch announcements for course {$course->id}", [
+                    'exception' => $e,
+                ]);
+            }
+        }
 
-		$collection = CurriculumCollection::fromApi(is_array($raw) ? $raw : []);
-		return $collection->latest();
-	}
+        // sort by publication date (descending)
+        usort(
+            $announcements,
+            function (CourseAnnouncement $a, CourseAnnouncement $b): int {
+                return $b->publishedAt->getTimestamp() <=> $a->publishedAt->getTimestamp();
+            }
+        );
 
+        return $announcements;
+    }
+
+    public function getLatestCurriculum(int $userId): ?Curriculum
+    {
+        $key = "person:{$userId}:curriculum:v1";
+
+        $raw = $this->cache->remember(
+            $key,
+            now()->addMinutes(5),
+            fn () => $this->fenix->getPersonCurriculum($userId)
+        );
+
+        // Optional debug logging (keeps parity with your other method)
+        Log::debug('Fenix API curriculum response', ['raw' => $raw]);
+
+        $collection = CurriculumCollection::fromApi(is_array($raw) ? $raw : []);
+
+        return $collection->latest();
+    }
 }

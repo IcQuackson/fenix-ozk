@@ -3,7 +3,7 @@
 @section('title', 'Dashboard · Fenix 2.0')
 
 @section('content')
-	<h1 class="text-2xl font-semibold mb-2">Bem-vindo de volta, {{ $kpis['name'] ?? '' }}!</h1>
+	<h1 class="text-2xl font-semibold mb-2">Bem-vindo de volta, {{ $personalInfo['name'] ?? '' }}!</h1>
 	<p class="text-slate-400 mb-6">Resumo da sua atividade académica</p>
 
 	@include('dashboard._cards')
