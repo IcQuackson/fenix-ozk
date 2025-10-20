@@ -2,10 +2,10 @@
                 scrollbar-thin scrollbar-track-transparent
                 scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
                 scrollbar-thumb-rounded-full">
-	@if(empty($summary['evaluations']))
+	@if(empty($evaluations))
 		<div class="text-slate-400 text-sm">Sem exames marcados.</div>
 	@else
-		@foreach($summary['evaluations'] as $eval)
+		@foreach($evaluations as $eval)
 			<div class="p-3 rounded-xl border border-slate-800 bg-slate-900 flex items-center justify-between"
 				data-exam-at="{{ $eval['exam_at'] ?? '' }}">
 				<div>

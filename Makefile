@@ -24,6 +24,8 @@ seed:
 tinker:
 	$(ARTISAN) tinker
 
+clean-serve: cache-clear build serve
+
 # --- Frontend (Vite / NPM) ---
 
 dev:

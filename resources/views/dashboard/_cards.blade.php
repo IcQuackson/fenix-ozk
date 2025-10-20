@@ -27,12 +27,6 @@
 	];
 @endphp
 
-{{-- Optional degree header --}}
-@if (data_get($curriculum, 'degree.display'))
-	<div class="mb-2 text-slate-300">
-		{{ data_get($curriculum, 'degree.display') }}
-	</div>
-@endif
 
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 	@foreach ($cards as $card)
