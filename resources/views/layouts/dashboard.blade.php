@@ -2,58 +2,45 @@
 <html lang="pt" class="h-full">
 
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-	<title>@yield('title', 'IST Fenix')</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <title>@yield('title', 'IST Fenix')</title>
 
-	<!-- Tailwind via Vite (preferred) -->
-	@vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Tailwind via Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-	<!-- Tailwind Scrollbar plugin styles -->
-	<style type="text/tailwindcss">
-		@layer utilities {
-      .scrollbar-thin { scrollbar-width: thin; }
-      .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-      .scrollbar-track-transparent::-webkit-scrollbar-track { background: transparent; }
-      .scrollbar-thumb-slate-400\/70::-webkit-scrollbar-thumb { background-color: rgba(148,163,184,0.7); }
-      .scrollbar-thumb-rounded-full::-webkit-scrollbar-thumb { border-radius: 9999px; }
-      .hover\:scrollbar-thumb-slate-500:hover::-webkit-scrollbar-thumb { background-color: #64748b; }
-      .scrollbar-thumb-slate-400\/70 { scrollbar-color: rgba(148,163,184,0.7) transparent; }
-    }
-  </style>
-
-	<!-- HTMX (optional if you use it) -->
-	<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 
 <body class="h-full bg-slate-950 text-slate-100">
-	<div class="min-h-screen flex">
-		<!-- Sidebar -->
-		<aside class="w-64 bg-slate-900 border-r border-slate-800 p-4">
-			<div class="flex items-center gap-2 mb-6">
-				<img src="{{ asset('favicon.ico') }}" alt="IST Fenix Logo" class="h-8 w-8 rounded-md">
-				<div>
-					<div class="font-semibold">Fénix OZK</div>
-					<div class="text-xs text-slate-400">O Fénix que quer o teu sucesso</div>
-				</div>
-			</div>
-			<nav class="space-y-1 text-slate-300">
-				<a href="{{ route('dashboard') }}" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Dashboard</a>
-				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Informação
-					Pessoal</a>
-				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Curricular</a>
-				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Avaliações</a>
-				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Horário</a>
-				<a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Pagamentos</a>
-			</nav>
-		</aside>
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-slate-900 border-r border-slate-800 p-4">
+            <div class="flex items-center gap-2 mb-6">
+                <img src="{{ asset('favicon.ico') }}" alt="IST Fenix Logo" class="h-8 w-8 rounded-md">
+                <div>
+                    <div class="font-semibold">Fénix OZK</div>
+                    <div class="text-xs text-slate-400">O Fénix que quer o teu sucesso</div>
+                </div>
+            </div>
+            <nav class="space-y-1 text-slate-300">
+                <a href="{{ route('dashboard') }}" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Dashboard</a>
+                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Informação
+                    Pessoal</a>
+                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Curricular</a>
+                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Avaliações</a>
+                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Horário</a>
+                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Pagamentos</a>
+            </nav>
+        </aside>
 
-		<!-- Main -->
-		<main class="flex-1 min-h-0 p-6 overflow-hidden">
-			@yield('content')
-		</main>
-	</div>
+        <!-- Main -->
+        <main class="flex-1 min-h-0 p-6 overflow-hidden">
+            @yield('content')
+        </main>
+    </div>
 </body>
 
 </html>

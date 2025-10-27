@@ -53,21 +53,20 @@
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 min-h-0 xl:grid-rows-[1fr_auto]">
         <section
             class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl
-				p-4 flex flex-col min-h-0 h-full overflow-hidden">
+                p-4 flex flex-col min-h-0 h-96 xl:h-[420px] overflow-hidden">
             <div class="flex items-center justify-between mb-2 shrink-0">
                 <h2 class="font-semibold">Últimos Anúncios</h2>
             </div>
 
-            <div id="last-announcements" class="flex flex-col flex-1 min-h-0 overflow-y-auto gap-3 pr-2">
-                <!--
-                    With the grid rows configured to let the first row take up the remaining vertical space (1fr),
-                    this container can once again use flexbox sizing to fill that space. The flex-1 and min-h-0
-                    utilities ensure the wrapper grows with its parent and collapses correctly, while the
-                    overflow-y-auto keeps the announcements list scrollable within its available height.
-                -->
-                <x-announcement-list :items="$announcements" class="flex-1 min-h-0 overflow-y-auto pr-2" />
+            <div
+                class="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-track-transparent
+                scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
+                scrollbar-thumb-rounded-full">
+                <x-announcement-list :items="$announcements" />
             </div>
         </section>
+
+
 
         <!-- Próximas Avaliações card -->
         <section
