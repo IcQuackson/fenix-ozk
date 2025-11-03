@@ -94,17 +94,13 @@
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 min-h-0 xl:grid-rows-[1fr_auto]">
         <section
             class="xl:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl
-                p-4 flex flex-col min-h-0 h-96 xl:h-[420px] overflow-hidden">
-            <div class="flex items-center justify-between mb-2 shrink-0">
-                <h2 class="font-semibold">Últimos Anúncios</h2>
-            </div>
-
-            <div
-                class="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-track-transparent
-                scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
-                scrollbar-thumb-rounded-full">
-                <x-announcement-list :items="$announcements" />
-            </div>
+                p-4 flex flex-col gap-3 min-h-0 h-auto md:h-96 xl:h-[420px] overflow-hidden">
+            <h2 class="font-semibold">Últimos Anúncios</h2>
+            <x-announcement-list :items="$announcements"
+                class="flex-1 min-h-0 overflow-y-auto max-h-48 md:max-h-none pr-2 space-y-2
+                    scrollbar-thin scrollbar-track-transparent
+                    scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
+                    scrollbar-thumb-rounded-full" />
         </section>
 
 
@@ -112,7 +108,7 @@
         <!-- Próximas Avaliações card -->
         <section
             class="bg-slate-900 border border-slate-800 rounded-2xl p-4
-                flex flex-col min-h-0 h-full overflow-hidden">
+                flex flex-col min-h-0 h-auto md:h-full overflow-hidden">
             <div class="flex items-center justify-between mb-2 shrink-0">
                 <h2 class="font-semibold">Próximas Avaliações</h2>
             </div>
