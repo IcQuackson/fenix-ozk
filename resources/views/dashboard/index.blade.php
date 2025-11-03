@@ -20,31 +20,72 @@
         </div>
 
         {{-- Right: personal info --}}
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-2 w-full lg:w-64">
-            @if (!empty($personalInfo['username']))
-                <div class="flex items-center gap-2">
-                    <x-lucide-user class="w-4 h-4 text-slate-400" />
-                    <span>{{ $personalInfo['username'] }}</span>
-                </div>
-            @endif
-            @if (!empty($personalInfo['institutionalEmail']))
-                <div class="flex items-center gap-2">
-                    <x-lucide-mail class="w-4 h-4 text-slate-400" />
-                    <span>{{ $personalInfo['institutionalEmail'] }}</span>
-                </div>
-            @endif
-            @if (!empty($personalInfo['campus']))
-                <div class="flex items-center gap-2">
-                    <x-lucide-map-pin class="w-4 h-4 text-slate-400" />
-                    <span>{{ $personalInfo['campus'] }}</span>
-                </div>
-            @endif
-            @if (!empty($curriculum['degree']['acronym']))
-                <div class="flex items-center gap-2">
-                    <x-lucide-graduation-cap class="w-4 h-4 text-slate-400" />
-                    <span>{{ $curriculum['degree']['acronym'] }}</span>
-                </div>
-            @endif
+        <div class="w-full lg:w-64" x-data="{ open: false }">
+            <button
+                type="button"
+                class="lg:hidden w-full flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200"
+                @click="open = !open">
+                <span>Ver informação pessoal</span>
+                <x-lucide-chevron-down :class="{ 'rotate-180': open }" class="w-4 h-4 text-slate-400 transition-transform" />
+            </button>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-2 hidden lg:block">
+                @if (!empty($personalInfo['username']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-user class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['username'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($personalInfo['institutionalEmail']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-mail class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['institutionalEmail'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($personalInfo['campus']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-map-pin class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['campus'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($curriculum['degree']['acronym']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-graduation-cap class="w-4 h-4 text-slate-400" />
+                        <span>{{ $curriculum['degree']['acronym'] }}</span>
+                    </div>
+                @endif
+            </div>
+
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 space-y-2 mt-3 lg:mt-0 lg:hidden"
+                x-cloak
+                x-show="open"
+                x-transition>
+                @if (!empty($personalInfo['username']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-user class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['username'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($personalInfo['institutionalEmail']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-mail class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['institutionalEmail'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($personalInfo['campus']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-map-pin class="w-4 h-4 text-slate-400" />
+                        <span>{{ $personalInfo['campus'] }}</span>
+                    </div>
+                @endif
+                @if (!empty($curriculum['degree']['acronym']))
+                    <div class="flex items-center gap-2">
+                        <x-lucide-graduation-cap class="w-4 h-4 text-slate-400" />
+                        <span>{{ $curriculum['degree']['acronym'] }}</span>
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 
