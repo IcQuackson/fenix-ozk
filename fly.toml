@@ -1,0 +1,35 @@
+app = "fenix-ozk"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  APP_ENV = "production"
+  APP_DEBUG = "false"
+  APP_URL = "https://fenix-ozk.fly.dev"
+  LOG_CHANNEL = "stderr"
+  LOG_LEVEL = "info"
+  CACHE_DRIVER = "file"
+  SESSION_DRIVER = "cookie"
+  QUEUE_CONNECTION = "sync"
+  PHP_OPCACHE_ENABLE = "1"
+
+[deploy]
+  release_command = "/bin/sh -c \"php artisan migrate --force --no-interaction && php artisan storage:link --force\""
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_start_machines = true
+  auto_stop_machines = "stop"
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+
+[[mounts]]
+  source = "storage"
+  destination = "/var/www/html/storage"
+  processes = ["app"]

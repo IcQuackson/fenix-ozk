@@ -1,0 +1,11 @@
+/.git
+/node_modules
+/vendor
+/storage/app/public
+/storage/framework/cache/data
+/storage/framework/sessions
+/storage/framework/testing
+/storage/logs
+/.env
+/tests
+/openapitools.json
