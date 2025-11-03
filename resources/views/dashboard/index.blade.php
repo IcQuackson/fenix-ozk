@@ -105,18 +105,35 @@
 
 
 
-        <!-- Próximas Avaliações card -->
-        <section
-            class="bg-slate-900 border border-slate-800 rounded-2xl p-4
-                flex flex-col min-h-0 h-auto md:h-full overflow-hidden">
-            <div class="flex items-center justify-between mb-2 shrink-0">
-                <h2 class="font-semibold">Próximas Avaliações</h2>
-            </div>
+        <div
+            class="flex flex-col gap-4 xl:gap-6 w-full
+                xl:col-span-1 xl:h-[420px]">
+            <section
+                class="bg-slate-900 border border-slate-800 rounded-2xl p-4
+                    flex flex-col min-h-0 h-auto md:h-full overflow-hidden
+                    xl:flex-1">
+                <div class="flex items-center justify-between mb-2 shrink-0">
+                    <h2 class="font-semibold">Próximas Avaliações</h2>
+                </div>
 
-            <div class="flex-1 min-h-0">
-                @include('dashboard._next_evaluations')
-            </div>
-        </section>
+                <div class="flex-1 min-h-0">
+                    @include('dashboard._next_evaluations')
+                </div>
+            </section>
+
+            <section
+                class="bg-slate-900 border border-slate-800 rounded-2xl p-4
+                    flex flex-col min-h-0 h-auto md:h-full overflow-hidden
+                    xl:flex-1">
+                <div class="flex items-center justify-between mb-2 shrink-0">
+                    <h2 class="font-semibold">Próximas Aulas</h2>
+                </div>
+
+                <div class="flex-1 min-h-0">
+                    @include('dashboard._next_classes')
+                </div>
+            </section>
+        </div>
 
         <section class="xl:col-span-3 mt-0">
             <div class="flex items-center justify-between mb-2">

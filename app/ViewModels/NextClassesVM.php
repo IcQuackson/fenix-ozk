@@ -34,6 +34,22 @@ final class NextClassesVM
 				$isOngoing = $hasStarted && $notFinished;
 			}
 
+			$startIso = $start?->toIso8601String();
+			$endIso = $end?->toIso8601String();
+			$dateLabel = $start?->format('d/m');
+			$timeLabel = match (true) {
+				$start && $end => $start->format('H:i') . ' - ' . $end->format('H:i'),
+				$start && !$end => $start->format('H:i'),
+				default => null,
+			};
+
+			$roomNames = array_map(
+				static fn(RoomRef $room) => trim($room->name) === ''
+					? $room->id
+					: $room->name,
+				$event->locations
+			);
+
 			return [
 				'title' => $event->title,
 				'course' => [
@@ -42,12 +58,18 @@ final class NextClassesVM
 					'name' => $event->course->name,
 					'academicTerm' => $event->course->academicTerm,
 				],
+				'dateLabel' => $dateLabel,
+				'timeLabel' => $timeLabel,
+				'startIso' => $startIso,
+				'endIso' => $endIso,
+				'roomNames' => $roomNames,
+				'roomsLabel' => empty($roomNames) ? null : implode(', ', $roomNames),
 				'period' => [
-					'start' => $start?->toIso8601String(),
-					'end' => $end?->toIso8601String(),
+					'start' => $startIso,
+					'end' => $endIso,
 				],
 				'rooms' => array_map(
-					fn (RoomRef $room) => [
+					static fn(RoomRef $room) => [
 						'id' => $room->id,
 						'name' => $room->name,
 						'type' => $room->type->value,
