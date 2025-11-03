@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ClassScheduleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,4 +22,5 @@ Route::middleware(['auth', 'fenix', 'throttle:fenix-api'])
         Route::get('/courses/{id}/groups', [CourseController::class, 'apiGroups'])->name('api.courses.groups');
         Route::get('/courses/{id}/schedule', [CourseController::class, 'apiSchedule'])->name('api.courses.schedule');
         Route::get('/courses/{id}/students', [CourseController::class, 'apiStudents'])->name('api.courses.students');
+        Route::get('/me/classes/next', [ClassScheduleController::class, 'next'])->name('api.me.classes.next');
     });
