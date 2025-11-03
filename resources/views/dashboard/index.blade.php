@@ -113,11 +113,11 @@
                     flex flex-col min-h-0 h-auto md:h-full overflow-hidden
                     xl:flex-1">
                 <div class="flex items-center justify-between mb-2 shrink-0">
-                    <h2 class="font-semibold">Próximas Avaliações</h2>
+                    <h2 class="font-semibold">Próximas Aulas</h2>
                 </div>
 
                 <div class="flex-1 min-h-0">
-                    @include('dashboard._next_evaluations')
+                    @include('dashboard._next_classes')
                 </div>
             </section>
 
@@ -126,11 +126,11 @@
                     flex flex-col min-h-0 h-auto md:h-full overflow-hidden
                     xl:flex-1">
                 <div class="flex items-center justify-between mb-2 shrink-0">
-                    <h2 class="font-semibold">Próximas Aulas</h2>
+                    <h2 class="font-semibold">Próximas Avaliações</h2>
                 </div>
 
                 <div class="flex-1 min-h-0">
-                    @include('dashboard._next_classes')
+                    @include('dashboard._next_evaluations')
                 </div>
             </section>
         </div>
