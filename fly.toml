@@ -3,6 +3,7 @@ primary_region = "ams"
 
 [build]
   dockerfile = "Dockerfile"
+  target = "deploy"
 
 [env]
   APP_ENV = "production"
@@ -13,13 +14,12 @@ primary_region = "ams"
   CACHE_DRIVER = "file"
   SESSION_DRIVER = "cookie"
   QUEUE_CONNECTION = "sync"
-  PHP_OPCACHE_ENABLE = "1"
 
 [deploy]
-  release_command = "/bin/sh -c \"php artisan migrate --force --no-interaction && php artisan storage:link --force\""
+  release_command = "/bin/sh -c \"php artisan optimize:clear && php artisan migrate --force --no-interaction\""
 
 [http_service]
-  internal_port = 8080
+  internal_port = 80
   force_https = true
   auto_start_machines = true
   auto_stop_machines = "stop"

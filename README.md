@@ -13,7 +13,7 @@ Fenix OZK is a Laravel-12 application that integrates the FenixEdu API to provid
 
 ### Setup steps
 
-1. **Clone and prepare the repository**.  Copy `.env.example` to `.env` and fill in application settings such as `APP_URL`, database credentials and Fenix OAuth settings (`FENIX_CLIENT_ID`, `FENIX_CLIENT_SECRET`, `FENIX_BASE_URL`, `FENIX_OAUTH_AUTHORIZE`, `FENIX_OAUTH_ACCESS_TOKEN`, `FENIX_OAUTH_REFRESH_TOKEN` and `FENIX_REDIRECT_URI`).
+1. **Clone and prepare the repository**.  Copy `.env.example` to `.env` and fill in application settings such as `APP_URL`, database credentials and Fenix OAuth settings (`FENIX_CLIENT_ID`, `FENIX_CLIENT_SECRET`, `FENIX_BASE_URL`, `FENIX_OAUTH_AUTHORIZE`, `FENIX_OAUTH_ACCESS_TOKEN`, `FENIX_OAUTH_REFRESH_TOKEN`, `FENIX_REDIRECT_URI`, and optionally `FENIX_SCOPE`).
 2. **Install PHP dependencies**.  Run `composer install`.  The `composer.json` file defines Laravel 12 as the framework and pulls in testing, linting and development tools.
 3. **Install front-end dependencies**.  Run `npm install`.  The `package.json` file lists Vite, Tailwind CSS, Alpine JS and other build dependencies.
 4. **Generate an application key**.  Run `php artisan key:generate` if it is not already generated.

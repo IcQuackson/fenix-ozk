@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -22,6 +23,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+            URL::forceScheme('https');
+            if ($appUrl = config('app.url')) {
+                URL::forceRootUrl($appUrl);
+            }
+        }
+
         // Define named rate limiters here (facades are ready during provider boot)
         RateLimiter::for('fenix-api', function (Request $request) {
             return [

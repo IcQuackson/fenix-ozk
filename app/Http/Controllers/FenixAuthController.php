@@ -20,11 +20,18 @@ final class FenixAuthController extends Controller
         // Use explicit redirect from config (exactly as registered at Fenix)
         $redirectUri = $cfg['redirect_uri'] ?: route('fenix.callback', [], true);
 
-        $qs = http_build_query([
+        $params = [
             'client_id' => $cfg['client_id'],
             'redirect_uri' => $redirectUri,
             'state' => $state,
-        ]);
+            'response_type' => 'code',
+        ];
+
+        if (!empty($cfg['scope'])) {
+            $params['scope'] = $cfg['scope'];
+        }
+
+        $qs = http_build_query($params);
 
         return redirect()->away($cfg['authorize_url'] . '?' . $qs);
     }

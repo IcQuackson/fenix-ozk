@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      target: app
+    env_file:
+      - .env.prod
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+    volumes:
+      - storage_data:/var/www/html/storage
+    expose:
+      - "9000"
+    networks:
+      - webnet
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      target: web
+    depends_on:
+      app:
+        condition: service_started
+    ports:
+      - "8080:80"
+    volumes:
+      - storage_data:/var/www/html/storage:ro
+    networks:
+      - webnet
+    restart: unless-stopped
+
+volumes:
+  storage_data:
+
+networks:
+  webnet:
+    driver: bridge

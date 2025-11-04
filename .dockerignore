@@ -6,6 +6,7 @@
 /storage/framework/sessions
 /storage/framework/testing
 /storage/logs
+/bootstrap/cache/*.php
 /.env
 /tests
 /openapitools.json

@@ -42,6 +42,7 @@ return [
         'client_id' => env('FENIX_CLIENT_ID'),
         'client_secret' => env('FENIX_CLIENT_SECRET'),
         'redirect_uri' => env('FENIX_REDIRECT_URI'),
+        'scope' => env('FENIX_SCOPE'),
     ],
 
 
