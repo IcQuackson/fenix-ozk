@@ -1,28 +1,36 @@
 @php
 	$cards = [
 		[
-			'label' => 'ECTS Totais',
-			'value' => data_get($curriculum, 'kpis.display.totalEcts', '0'),
-			'subtitle' => 'Concluídos (62%)',
-			'subtitle_class' => 'text-emerald-400',
+			'label' => 'Próximo projeto',
+			'value' => data_get($curriculum, 'kpis.display.nextProject.value', '—'),
+			'subtitle' => data_get($curriculum, 'kpis.display.nextProject.subtitle', 'Sem projetos'),
+			'subtitle_class' => data_get($curriculum, 'kpis.display.nextProject.subtitleClass', 'text-slate-500'),
+			'value_class' => 'text-2xl font-semibold mt-2 leading-tight',
+			'link' => data_get($curriculum, 'kpis.display.nextProject.link'),
+		],
+		[
+			'label' => 'Situação financeira',
+			'value' => data_get($curriculum, 'kpis.display.financialStanding.value', '—'),
+			'subtitle' => data_get($curriculum, 'kpis.display.financialStanding.subtitle', ''),
+			'subtitle_class' => data_get($curriculum, 'kpis.display.financialStanding.subtitleClass', 'text-slate-500'),
+			'value_class' => 'text-2xl font-semibold mt-2 leading-tight',
+			'link' => data_get($curriculum, 'kpis.display.financialStanding.link'),
 		],
 		[
 			'label' => 'Média Atual',
 			'value' => data_get($curriculum, 'kpis.display.avgGrade', '—'),
 			'subtitle' => '',
 			'subtitle_class' => 'text-slate-500',
+			'value_class' => 'text-3xl font-semibold mt-2',
+			'link' => null,
 		],
 		[
-			'label' => 'ECTS Neste Termo',
-			'value' => data_get($curriculum, 'kpis.display.ectsThisTerm', '0'),
-			'subtitle' => 'Aprovados no período atual',
+			'label' => 'ECTS Totais',
+			'value' => data_get($curriculum, 'kpis.display.totalEcts', '0'),
+			'subtitle' => '',
 			'subtitle_class' => 'text-slate-500',
-		],
-		[
-			'label' => 'Ritmo (ECTS/ano)',
-			'value' => data_get($curriculum, 'kpis.display.ectsPerYear', '—'),
-			'subtitle' => 'Estimado desde o início do curso',
-			'subtitle_class' => 'text-slate-500',
+			'value_class' => 'text-3xl font-semibold mt-2',
+			'link' => null,
 		],
 	];
 @endphp
@@ -66,13 +74,24 @@
 				xl:grid xl:grid-cols-4 xl:gap-6 xl:min-w-full">
 			@foreach ($cards as $card)
 				<div
-					class="bg-slate-900 border border-slate-800 rounded-2xl p-4 min-w-[220px] snap-center
+					class="bg-slate-900 border border-slate-800 rounded-2xl p-4 min-w-[180px] sm:min-w-[200px] lg:min-w-[220px] snap-center
 						flex-shrink-0 xl:min-w-0">
 					<div class="text-slate-400 text-sm">{{ $card['label'] }}</div>
-					<div class="text-3xl font-semibold mt-2">{{ $card['value'] }}</div>
+					<div class="{{ $card['value_class'] ?? 'text-3xl font-semibold mt-2' }}">{{ $card['value'] }}</div>
 					<div class="text-xs mt-1 {{ $card['subtitle_class'] }}">
 						{{ $card['subtitle'] }}
 					</div>
+					@if (!empty($card['link']))
+						<div class="text-xs mt-2">
+							<a
+								href="{{ $card['link'] }}"
+								class="text-sky-400 hover:text-sky-300 underline"
+								target="_blank"
+								rel="noreferrer">
+								Ver submissão
+							</a>
+						</div>
+					@endif
 				</div>
 			@endforeach
 		</div>

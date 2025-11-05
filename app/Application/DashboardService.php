@@ -7,6 +7,7 @@ use App\Domain\Entities\Course;
 use App\Domain\Entities\CourseEvaluation;
 use App\Domain\Entities\Curriculum;
 use App\Domain\Entities\Person;
+use App\Domain\Entities\EvaluationType;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
@@ -118,20 +119,31 @@ final class DashboardService
      *   kpis: array{
      *     totalEcts: float,
      *     avgGrade: ?float,
-     *     ectsThisTerm: float,
-     *     ectsPerYear: ?float
+     *     financialStanding: array{
+     *       pendingCount:int,
+     *       pendingTotal:?float,
+     *       nextDueDate:?string
+     *     },
+     *     nextProject:?array{
+     *       evaluationName:string,
+     *       courseName:?string,
+     *       dueAt:?string,
+     *       link:?string
+     *     }
      *   }
      * }
      */
     public function curriculumKpis(int $userId): array
     {
-        $cacheKey = "dashboard:curriculumKpis:{$userId}:v1";
+        $cacheKey = "dashboard:curriculumKpis:{$userId}:v2";
 
         return $this->cache->remember($cacheKey, now()->addMinutes(15), function () use ($userId) {
             $lock = $this->cache->lock("lock:dashboardKpis:{$userId}", 10);
 
             return $lock->block(5, function () use ($userId) {
                 $curriculum = $this->personService->getLatestCurriculum($userId);
+                $financialStanding = $this->buildFinancialStanding($userId);
+                $nextProject = $this->determineNextProject($userId);
 
                 if (! $curriculum) {
                     return [
@@ -139,8 +151,8 @@ final class DashboardService
                         'kpis' => [
                             'totalEcts' => 0.0,
                             'avgGrade' => null,
-                            'ectsThisTerm' => 0.0,
-                            'ectsPerYear' => null,
+                            'financialStanding' => $financialStanding,
+                            'nextProject' => $nextProject,
                         ],
                     ];
                 }
@@ -152,25 +164,6 @@ final class DashboardService
                 $avgGrade = $curriculum->average ?: null;
                 $avgGrade = $avgGrade !== null ? (float) $avgGrade : null;
 
-                // 3) ECTS earned in the current academic term
-                $term = $this->institutionService->currentAcademicTerm();
-                $ectsThisTerm = 0.0;
-                foreach ($curriculum->approvedCourses as $course) {
-                    if ($course->academicTerm === $term && $course->ects !== null) {
-                        $ectsThisTerm += (float) $course->ects;
-                    }
-                }
-
-                // 4) ECTS per year (pace)
-                $start = $curriculum->start ? Carbon::instance($curriculum->start) : null;
-                $endRef = $curriculum->end ? Carbon::instance($curriculum->end) : now();
-                $years = null;
-                if ($start) {
-                    $days = max(1, $start->diffInDays($endRef)); // avoid divide-by-zero
-                    $years = $days / 365.25;
-                }
-                $ectsPerYear = $years ? $totalEcts / $years : null;
-
                 return [
                     'degree' => [
                         'id' => $curriculum->degreeId,
@@ -180,11 +173,170 @@ final class DashboardService
                     'kpis' => [
                         'totalEcts' => round($totalEcts, 2),
                         'avgGrade' => $avgGrade !== null ? round($avgGrade, 2) : null,
-                        'ectsThisTerm' => round($ectsThisTerm, 2),
-                        'ectsPerYear' => $ectsPerYear !== null ? round($ectsPerYear, 2) : null,
+                        'financialStanding' => $financialStanding,
+                        'nextProject' => $nextProject,
                     ],
                 ];
             });
         });
+    }
+
+    /**
+     * @return array{pendingCount:int,pendingTotal:?float,nextDueDate:?string}
+     */
+    private function buildFinancialStanding(int $userId): array
+    {
+        $pendingCount = 0;
+        $pendingTotal = null;
+        $nextDueDate = null;
+
+        $payments = $this->fenix->getPersonPayments($userId);
+        $pending = (array) ($payments['pending'] ?? []);
+
+        foreach ($pending as $payment) {
+            if (!is_array($payment)) {
+                continue;
+            }
+
+            $pendingCount++;
+
+            $amount = $this->normalizeAmount($payment['amount'] ?? null);
+            if ($amount !== null) {
+                $pendingTotal = ($pendingTotal ?? 0.0) + $amount;
+            }
+
+            $period = $payment['paymentPeriod'] ?? [];
+            $dueRaw = is_array($period) ? ($period['end'] ?? $period['start'] ?? null) : null;
+            $due = $this->parseDate($dueRaw);
+
+            if ($due !== null && ($nextDueDate === null || $due->lessThan($nextDueDate))) {
+                $nextDueDate = $due;
+            }
+        }
+
+        return [
+            'pendingCount' => $pendingCount,
+            'pendingTotal' => $pendingTotal !== null ? round($pendingTotal, 2) : null,
+            'nextDueDate' => $nextDueDate?->toAtomString(),
+        ];
+    }
+
+    /**
+     * @return array{
+     *   evaluationName:string,
+     *   courseName:?string,
+     *   dueAt:?string,
+     *   link:?string
+     * }|null
+     */
+    private function determineNextProject(int $userId): ?array
+    {
+        $projects = collect($this->getUpcomingEvaluations($userId))
+            ->filter(function (CourseEvaluation $evaluation) {
+                return $evaluation->type === EvaluationType::PROJECT;
+            })
+            ->map(function (CourseEvaluation $evaluation) {
+                $due = $evaluation->evaluationPeriod?->end ?? $evaluation->evaluationPeriod?->start;
+
+                return [
+                    'evaluation' => $evaluation,
+                    'dueAt' => $due,
+                ];
+            })
+            ->filter(fn ($item) => $item['dueAt'] instanceof \Carbon\CarbonInterface)
+            ->sortBy(fn ($item) => $item['dueAt']->getTimestamp())
+            ->values();
+
+        if ($projects->isEmpty()) {
+            return null;
+        }
+
+        /** @var array{evaluation:CourseEvaluation,dueAt:\Carbon\CarbonInterface} $next */
+        $next = $projects->first();
+        $evaluation = $next['evaluation'];
+        $dueAt = $next['dueAt'];
+
+        $course = $evaluation->course;
+        $link = $course?->summaryLink
+            ?? $course?->announcementLink
+            ?? $course?->url;
+
+        return [
+            'evaluationName' => $evaluation->name,
+            'courseName' => $course?->name,
+            'dueAt' => $dueAt?->toAtomString(),
+            'link' => $link,
+        ];
+    }
+
+    private function normalizeAmount(mixed $amount): ?float
+    {
+        if (is_int($amount) || is_float($amount)) {
+            return (float) $amount;
+        }
+
+        if (!is_string($amount)) {
+            return null;
+        }
+
+        $clean = trim($amount);
+        if ($clean === '') {
+            return null;
+        }
+
+        $clean = preg_replace('/[^0-9,.\-]/', '', $clean) ?? '';
+        if ($clean === '') {
+            return null;
+        }
+
+        $hasComma = str_contains($clean, ',');
+        $hasDot = str_contains($clean, '.');
+
+        if ($hasComma && $hasDot) {
+            $lastComma = strrpos($clean, ',');
+            $lastDot = strrpos($clean, '.');
+            if ($lastComma !== false && $lastDot !== false) {
+                if ($lastComma > $lastDot) {
+                    $clean = str_replace('.', '', $clean);
+                    $clean = str_replace(',', '.', $clean);
+                } else {
+                    $clean = str_replace(',', '', $clean);
+                }
+            }
+        } elseif ($hasComma) {
+            $clean = str_replace(',', '.', $clean);
+        }
+
+        if (!is_numeric($clean)) {
+            return null;
+        }
+
+        return (float) $clean;
+    }
+
+    private function parseDate(mixed $value): ?Carbon
+    {
+        if ($value instanceof \DateTimeInterface) {
+            return Carbon::instance(\DateTime::createFromInterface($value));
+        }
+
+        if (!is_string($value)) {
+            return null;
+        }
+
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        try {
+            if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $value) === 1) {
+                return Carbon::createFromFormat('d/m/Y', $value)->endOfDay();
+            }
+
+            return Carbon::parse($value);
+        } catch (\Throwable) {
+            return null;
+        }
     }
 }
