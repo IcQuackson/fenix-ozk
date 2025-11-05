@@ -23,7 +23,7 @@
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <aside
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-700 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0"
+            class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-slate-900 border-r border-slate-700 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-2">
@@ -35,7 +35,7 @@
                 </div>
                 <button class="md:hidden p-2 text-slate-300" @click="sidebarOpen=false">✕</button>
             </div>
-            <nav class="space-y-1 text-slate-200">
+            <nav class="flex-1 space-y-1 text-slate-200">
                 <a href="{{ route('dashboard') }}"
                     class="block rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('dashboard') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/20' : 'border border-transparent hover:bg-slate-800 hover:border-slate-700' }}">
                     Dashboard
@@ -61,6 +61,14 @@
                     Pagamentos
                 </a>
             </nav>
+            <form method="POST" action="{{ route('logout') }}"
+                class="mt-6 border-t border-slate-800 pt-4">
+                @csrf
+                <button type="submit"
+                    class="w-full rounded-lg px-3 py-2 text-left transition-colors border border-transparent bg-slate-800 hover:bg-red-500/10 hover:border-red-500/50 hover:text-red-300 hover:cursor-pointer">
+                    Terminar sessão
+                </button>
+            </form>
         </aside>
 
         <!-- Overlay -->

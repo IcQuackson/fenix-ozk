@@ -18,7 +18,6 @@ Route::get('/healthz', fn() => response('ok', 200))->name('healthz');
 // --- Fenix OAuth (public) ---
 Route::get('/fenix/connect', [FenixAuthController::class, 'connect'])->name('fenix.connect');
 Route::get('/fenix/callback', [FenixAuthController::class, 'callback'])->name('fenix.callback');
-
 // --- SSR App (auth + fenix + throttle) ---
 // We use '/' as the canonical dashboard route name.
 Route::middleware(['auth', 'fenix', 'throttle:60,1'])->group(function () {
