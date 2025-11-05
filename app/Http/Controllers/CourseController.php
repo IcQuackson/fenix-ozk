@@ -2,8 +2,10 @@
 namespace App\Http\Controllers;
 
 use App\Application\CourseService;
+use App\Application\PersonService;
 use App\ViewModels\{
     CourseVM,
+    CourseIndexVM,
     CourseEvaluationsVM,
     CourseGroupsVM,
     CourseScheduleVM,
@@ -14,11 +16,23 @@ use Illuminate\Http\JsonResponse;
 
 final class CourseController extends Controller
 {
-    public function __construct(private CourseService $svc)
+    public function __construct(
+        private CourseService $svc,
+        private PersonService $personService,
+    )
     {
     }
 
     // ---- Web (Blade) ----
+    public function index(): View
+    {
+        $userId = (int) auth()->id();
+        $courses = $this->personService->getCurrentEnrolledCourses($userId);
+        $vm = CourseIndexVM::fromDomain($courses);
+
+        return view('courses.index', compact('vm'));
+    }
+
     public function show(string $id): View
     {
         $course = $this->svc->getCourse($id);
@@ -55,6 +69,15 @@ final class CourseController extends Controller
     }
 
     // ---- API (JSON) ----
+    public function apiIndex(): JsonResponse
+    {
+        $userId = (int) auth()->id();
+        $courses = $this->personService->getCurrentEnrolledCourses($userId);
+        $vm = CourseIndexVM::fromDomain($courses);
+
+        return response()->json($vm->toArray());
+    }
+
     public function apiShow(string $id): JsonResponse
     {
         $course = $this->svc->getCourse($id);

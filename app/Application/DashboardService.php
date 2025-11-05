@@ -39,9 +39,9 @@ final class DashboardService
             $lock = $this->cache->lock("lock:dashboard:ectsSum:{$userId}", 10);
 
             return $lock->block(5, function () use ($userId) {
-                $curriculum = $this->fenix->getPersonCurriculum($userId);
+                $curriculum = $this->personService->getLatestCurriculum($userId);
 
-                return collect($curriculum)->sum(fn ($c) => (float) ($c['ects'] ?? 0));
+                return $curriculum ? (float) $curriculum->credits : 0.0;
             });
         });
     }

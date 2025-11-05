@@ -60,7 +60,19 @@ final class PersonService
     {
         $raw = $this->fenix->getPersonCourses($userId, $term);
 
-        $courses = array_map(fn ($c) => Course::fromApi($c), $raw['enrolments'] ?? []);
+        $courses = array_map(function ($c) {
+            $courseRaw = $c['course'] ?? $c ?? [];
+            if (is_array($courseRaw)) {
+                if (isset($c['grade']) && !array_key_exists('grade', $courseRaw)) {
+                    $courseRaw['grade'] = $c['grade'];
+                }
+                if (isset($c['ects']) && !array_key_exists('ects', $courseRaw)) {
+                    $courseRaw['ects'] = $c['ects'];
+                }
+            }
+
+            return Course::fromApi(is_array($courseRaw) ? $courseRaw : []);
+        }, $raw['enrolments'] ?? []);
 
         return $courses;
     }
