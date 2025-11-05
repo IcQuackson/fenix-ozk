@@ -19,11 +19,11 @@
     </style>
 </head>
 
-<body x-data="{ sidebarOpen: false }" class="h-full bg-slate-950 text-slate-100">
+<body x-data="{ sidebarOpen: false }" class="h-full bg-slate-900 text-slate-100">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <aside
-            class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-700 p-4 transform transition-transform duration-200 ease-in-out md:translate-x-0"
             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-2">
@@ -35,13 +35,31 @@
                 </div>
                 <button class="md:hidden p-2 text-slate-300" @click="sidebarOpen=false">✕</button>
             </div>
-            <nav class="space-y-1 text-slate-300">
-                <a href="{{ route('dashboard') }}" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Dashboard</a>
-                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Informação Pessoal</a>
-                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Curricular</a>
-                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Avaliações</a>
-                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Horário</a>
-                <a href="#" class="block rounded-sm px-3 py-2 hover:bg-slate-800">Pagamentos</a>
+            <nav class="space-y-1 text-slate-200">
+                <a href="{{ route('dashboard') }}"
+                    class="block rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('dashboard') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/20' : 'border border-transparent hover:bg-slate-800 hover:border-slate-700' }}">
+                    Dashboard
+                </a>
+                <a href="#"
+                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
+                    Informação Pessoal
+                </a>
+                <a href="#"
+                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
+                    Curricular
+                </a>
+                <a href="#"
+                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
+                    Avaliações
+                </a>
+                <a href="#"
+                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
+                    Horário
+                </a>
+                <a href="#"
+                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
+                    Pagamentos
+                </a>
             </nav>
         </aside>
 

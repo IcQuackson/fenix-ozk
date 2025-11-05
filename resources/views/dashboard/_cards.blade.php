@@ -4,32 +4,32 @@
 			'label' => 'Próximo projeto',
 			'value' => data_get($curriculum, 'kpis.display.nextProject.value', '—'),
 			'subtitle' => data_get($curriculum, 'kpis.display.nextProject.subtitle', 'Sem projetos'),
-			'subtitle_class' => data_get($curriculum, 'kpis.display.nextProject.subtitleClass', 'text-slate-500'),
-			'value_class' => 'text-2xl font-semibold mt-2 leading-tight',
+			'subtitle_class' => data_get($curriculum, 'kpis.display.nextProject.subtitleClass', 'text-slate-400'),
+			'value_class' => 'text-2xl font-semibold leading-tight text-sky-300',
 			'link' => data_get($curriculum, 'kpis.display.nextProject.link'),
 		],
 		[
 			'label' => 'Situação financeira',
 			'value' => data_get($curriculum, 'kpis.display.financialStanding.value', '—'),
 			'subtitle' => data_get($curriculum, 'kpis.display.financialStanding.subtitle', ''),
-			'subtitle_class' => data_get($curriculum, 'kpis.display.financialStanding.subtitleClass', 'text-slate-500'),
-			'value_class' => 'text-2xl font-semibold mt-2 leading-tight',
+			'subtitle_class' => data_get($curriculum, 'kpis.display.financialStanding.subtitleClass', 'text-slate-400'),
+			'value_class' => 'text-2xl font-semibold leading-tight text-sky-300',
 			'link' => data_get($curriculum, 'kpis.display.financialStanding.link'),
 		],
 		[
 			'label' => 'Média Atual',
 			'value' => data_get($curriculum, 'kpis.display.avgGrade', '—'),
 			'subtitle' => '',
-			'subtitle_class' => 'text-slate-500',
-			'value_class' => 'text-3xl font-semibold mt-2',
+			'subtitle_class' => 'text-slate-400',
+			'value_class' => 'text-3xl font-semibold text-sky-200',
 			'link' => null,
 		],
 		[
 			'label' => 'ECTS Totais',
 			'value' => data_get($curriculum, 'kpis.display.totalEcts', '0'),
 			'subtitle' => '',
-			'subtitle_class' => 'text-slate-500',
-			'value_class' => 'text-3xl font-semibold mt-2',
+			'subtitle_class' => 'text-slate-400',
+			'value_class' => 'text-3xl font-semibold text-sky-200',
 			'link' => null,
 		],
 	];
@@ -74,11 +74,14 @@
 				xl:grid xl:grid-cols-4 xl:gap-6 xl:min-w-full">
 			@foreach ($cards as $card)
 				<div
-					class="bg-slate-900 border border-slate-800 rounded-2xl p-4 min-w-[180px] sm:min-w-[200px] lg:min-w-[220px] snap-center
-						flex-shrink-0 xl:min-w-0">
-					<div class="text-slate-400 text-sm">{{ $card['label'] }}</div>
-					<div class="{{ $card['value_class'] ?? 'text-3xl font-semibold mt-2' }}">{{ $card['value'] }}</div>
-					<div class="text-xs mt-1 {{ $card['subtitle_class'] }}">
+						class="bg-slate-800 border border-slate-700 rounded-2xl p-5 min-w-[180px] sm:min-w-[200px] lg:min-w-[220px] snap-center
+							flex-shrink-0 xl:min-w-0">
+					<div class="flex items-center gap-2 text-sm font-medium text-slate-200">
+						<span class="inline-block w-2 h-2 rounded-full bg-sky-400"></span>
+						<span>{{ $card['label'] }}</span>
+					</div>
+					<div class="{{ $card['value_class'] ?? 'text-3xl font-semibold' }} mt-3">{{ $card['value'] }}</div>
+					<div class="text-xs mt-2 {{ $card['subtitle_class'] }}">
 						{{ $card['subtitle'] }}
 					</div>
 					@if (!empty($card['link']))

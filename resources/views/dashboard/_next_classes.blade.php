@@ -6,11 +6,11 @@
         <div class="text-slate-400 text-sm">Sem aulas marcadas.</div>
     @else
         @foreach ($classes as $class)
-            <article class="p-3 rounded-xl border border-slate-800 bg-slate-900 flex items-start justify-between gap-3"
+            <article class="p-3 rounded-xl border border-slate-700 bg-slate-800 flex items-start justify-between gap-3"
                 data-class-start="{{ $class['startIso'] ?? '' }}">
                 <div class="flex-1">
                     @if (!empty($class['dateLabel']))
-                        <div class="text-xs uppercase tracking-wide text-slate-400">
+                        <div class="text-xs uppercase tracking-wide text-slate-300">
                             {{ $class['dateLabel'] }}
                         </div>
                     @endif
@@ -23,14 +23,14 @@
                     </div>
 
                     @if (!empty($class['timeLabel']))
-                        <div class="text-sm text-slate-400">
+                        <div class="text-sm text-slate-300">
                             {{ $class['timeLabel'] }}
                         </div>
                     @endif
 
                     @if (!empty($class['roomsLabel']))
-                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                            <x-lucide-map-pin class="w-3 h-3" />
+                        <div class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                            <x-lucide-map-pin class="w-3 h-3 text-slate-400" />
                             <span>{{ $class['roomsLabel'] }}</span>
                         </div>
                     @endif

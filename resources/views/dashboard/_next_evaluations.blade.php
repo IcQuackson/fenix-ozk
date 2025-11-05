@@ -6,12 +6,12 @@
 		<div class="text-slate-400 text-sm">Sem exames marcados.</div>
 	@else
 		@foreach($evaluations as $eval)
-			<div class="p-3 rounded-xl border border-slate-800 bg-slate-900 flex items-center justify-between"
+			<div class="p-3 rounded-xl border border-slate-700 bg-slate-800 flex items-center justify-between"
 				data-exam-at="{{ $eval['exam_at'] ?? '' }}">
 				<div>
 					<div class="font-medium">{{ $eval['course'] ?? '' }}</div>
 					<div class="text-sm text-slate-300">{{ $eval['name'] }}</div>
-					<div class="text-sm text-slate-400">
+					<div class="text-sm text-slate-300">
 						{{ $eval['exam_at'] ?? 'Sem data marcada.' }}
 					</div>
 				</div>
