@@ -14,8 +14,8 @@
             $courseName = $a['courseName'] ?? null;
         @endphp
 
-        <details class="group border border-slate-800 bg-slate-900/50 rounded-lg">
-            <summary class="flex justify-between items-start p-3 cursor-pointer list-none">
+        <details class="group border border-slate-700 bg-slate-800 rounded-xl overflow-hidden">
+            <summary class="flex justify-between items-start p-3 cursor-pointer list-none hover:bg-slate-700/30 transition-colors">
                 <div class="min-w-0">
                     <h3 class="text-sm font-medium text-slate-100 truncate">{{ $title }}</h3>
                     <p class="text-xs text-slate-500 mt-1 truncate">{{ $courseName }} • {{ $publishedAt }}</p>
@@ -27,7 +27,7 @@
                 </svg>
             </summary>
 
-            <div class="p-3 pt-0 text-sm text-slate-300 space-y-2">
+            <div class="p-3 pt-3 text-sm text-slate-300 space-y-2 border-t border-slate-700">
                 <div class="prose prose-invert prose-sm max-w-none">{!! $a['description'] ?? '' !!}</div>
                 @if (!empty($a['link']))
                     <a href="{{ $a['link'] }}" target="_blank" rel="noopener"
