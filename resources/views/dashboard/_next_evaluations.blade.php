@@ -1,4 +1,4 @@
-<div id="next-evaluations" class="space-y-3 max-h-40 md:max-h-64 xl:max-h-none xl:h-full overflow-y-auto pr-1
+<div id="next-evaluations" class="space-y-3 max-h-[12rem] md:max-h-[20rem] xl:max-h-none xl:h-full overflow-y-auto pr-0 md:pr-1
                 scrollbar-thin scrollbar-track-transparent
                 scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
                 scrollbar-thumb-rounded-full">

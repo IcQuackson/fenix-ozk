@@ -93,11 +93,11 @@
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 min-h-0 xl:grid-rows-[1fr_auto]">
         <section
-            class="xl:col-span-2 bg-slate-800 border border-slate-700 rounded-2xl
-                p-5 flex flex-col gap-4 min-h-0 h-auto md:h-96 xl:h-[420px] overflow-hidden">
+            class="xl:col-span-2 flex flex-col gap-4 min-h-0 h-auto md:h-96 xl:h-[420px] overflow-hidden
+                md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
             <h2 class="font-semibold">Últimos Anúncios</h2>
             <x-announcement-list :items="$announcements"
-                class="flex-1 min-h-0 overflow-y-auto max-h-48 md:max-h-none pr-2 space-y-2
+                class="flex-1 min-h-0 overflow-y-auto max-h-[16rem] md:max-h-[24rem] xl:max-h-none pr-0 md:pr-2 space-y-2
                     scrollbar-thin scrollbar-track-transparent
                     scrollbar-thumb-slate-400/70 hover:scrollbar-thumb-slate-500
                     scrollbar-thumb-rounded-full" />
@@ -109,9 +109,8 @@
             class="flex flex-col gap-4 xl:gap-6 w-full
                 xl:col-span-1 xl:h-[420px]">
             <section
-                class="bg-slate-800 border border-slate-700 rounded-2xl p-5
-                    flex flex-col min-h-0 h-auto md:h-full overflow-hidden
-                    xl:flex-1">
+                class="flex flex-col min-h-0 h-auto md:h-full overflow-hidden
+                    xl:flex-1 md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
                 <div class="flex items-center justify-between mb-2 shrink-0">
                     <h2 class="font-semibold">Próximas Aulas</h2>
                 </div>
@@ -122,9 +121,8 @@
             </section>
 
             <section
-                class="bg-slate-800 border border-slate-700 rounded-2xl p-5
-                    flex flex-col min-h-0 h-auto md:h-full overflow-hidden
-                    xl:flex-1">
+                class="flex flex-col min-h-0 h-auto md:h-full overflow-hidden
+                    xl:flex-1 md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
                 <div class="flex items-center justify-between mb-2 shrink-0">
                     <h2 class="font-semibold">Próximas Avaliações</h2>
                 </div>

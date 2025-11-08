@@ -1,7 +1,6 @@
 @props([
     'items' => [],
     'empty' => 'Sem anúncios recentes.',
-    'maxPreview' => 100,
 ])
 
 <div {{ $attributes->merge(['class' => 'space-y-2']) }}>
@@ -9,7 +8,6 @@
         @php
             $title = $a['title'] ?? '—';
             $desc = strip_tags($a['description'] ?? '');
-            $preview = \Illuminate\Support\Str::of($desc)->squish()->limit($maxPreview, '…');
             $publishedAt = $a['publishedAt'] ?? null;
             $courseName = $a['courseName'] ?? null;
         @endphp
@@ -18,8 +16,17 @@
             <summary class="flex justify-between items-start p-3 cursor-pointer list-none hover:bg-slate-700/30 transition-colors">
                 <div class="min-w-0">
                     <h3 class="text-sm font-medium text-slate-100 truncate">{{ $title }}</h3>
-                    <p class="text-xs text-slate-500 mt-1 truncate">{{ $courseName }} • {{ $publishedAt }}</p>
-                    <p class="text-xs text-slate-400 group-open:hidden mt-1">{{ $preview }}</p>
+                    <div class="text-xs text-slate-500 mt-1 flex flex-col sm:flex-row sm:items-center sm:gap-2">
+                        @if ($courseName)
+                            <span class="truncate">{{ $courseName }}</span>
+                        @endif
+                        @if ($courseName && $publishedAt)
+                            <span class="hidden sm:inline text-slate-600">•</span>
+                        @endif
+                        @if ($publishedAt)
+                            <span class="text-slate-400 sm:text-slate-500">{{ $publishedAt }}</span>
+                        @endif
+                    </div>
                 </div>
                 <svg class="h-4 w-4 mt-1 shrink-0 transition-transform group-open:rotate-180 text-slate-400"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
