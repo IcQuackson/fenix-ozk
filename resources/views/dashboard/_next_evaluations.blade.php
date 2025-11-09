@@ -16,7 +16,8 @@
 					</div>
 				</div>
 				<div class="flex flex-col items-end gap-1 ml-4 shrink-0">
-					<span class="text-xs font-medium px-2 py-1 rounded-sm border badge-days hidden"></span>
+					<span
+						class="badge-days hidden inline-flex items-center justify-center text-[11px] leading-none font-semibold tracking-wide uppercase px-3 py-1 rounded-full border border-transparent shadow-sm ring-1 transition-colors duration-200 backdrop-blur"></span>
 				</div>
 			</div>
 		@endforeach

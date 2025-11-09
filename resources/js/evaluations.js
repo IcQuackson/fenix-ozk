@@ -2,6 +2,22 @@ export default function setupEvaluationsBadges() {
 	const items = document.querySelectorAll("#next-evaluations [data-exam-at]");
 	if (!items.length) return;
 
+	const badgeStyles = {
+		today: ["bg-rose-500/15", "text-rose-100", "border-rose-400/40", "ring-rose-500/30"],
+		urgent: ["bg-amber-500/15", "text-amber-100", "border-amber-400/40", "ring-amber-500/30"],
+		soon: ["bg-sky-500/15", "text-sky-100", "border-sky-400/40", "ring-sky-500/20"],
+		later: ["bg-emerald-500/10", "text-emerald-100", "border-emerald-400/30", "ring-emerald-500/20"]
+	};
+
+	const removableClasses = [
+		...new Set(Object.values(badgeStyles).flat())
+	];
+
+	const applyBadgeStyles = (badge, variant) => {
+		badge.classList.remove(...removableClasses, "hidden");
+		badge.classList.add(...(badgeStyles[variant] || []));
+	};
+
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
 
@@ -31,20 +47,18 @@ export default function setupEvaluationsBadges() {
 
 		if (daysLeft < 0) return; // already passed
 
-		badge.classList.remove("hidden");
-
 		if (daysLeft === 0) {
 			badge.textContent = "Hoje";
-			badge.classList.add("bg-red-600", "text-white");
+			applyBadgeStyles(badge, "today");
 		} else {
 			badge.textContent = `${daysLeft} dia${daysLeft > 1 ? "s" : ""}`;
 
 			if (daysLeft <= 3) {
-				badge.classList.add("bg-red-600", "text-white");
+				applyBadgeStyles(badge, "urgent");
 			} else if (daysLeft <= 7) {
-				badge.classList.add("bg-yellow-500", "text-black");
+				applyBadgeStyles(badge, "soon");
 			} else {
-				badge.classList.add("bg-green-600", "text-white");
+				applyBadgeStyles(badge, "later");
 			}
 		}
 	});

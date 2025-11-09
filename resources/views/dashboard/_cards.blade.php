@@ -2,6 +2,7 @@
 	$cards = [
 		[
 			'label' => 'Próximo projeto',
+			'icon' => 'rocket',
 			'value' => data_get($curriculum, 'kpis.display.nextProject.value', '—'),
 			'subtitle' => data_get($curriculum, 'kpis.display.nextProject.subtitle', 'Sem projetos'),
 			'subtitle_class' => data_get($curriculum, 'kpis.display.nextProject.subtitleClass', 'text-slate-400'),
@@ -10,6 +11,7 @@
 		],
 		[
 			'label' => 'Situação financeira',
+			'icon' => 'wallet',
 			'value' => data_get($curriculum, 'kpis.display.financialStanding.value', '—'),
 			'subtitle' => data_get($curriculum, 'kpis.display.financialStanding.subtitle', ''),
 			'subtitle_class' => data_get($curriculum, 'kpis.display.financialStanding.subtitleClass', 'text-slate-400'),
@@ -18,6 +20,7 @@
 		],
 		[
 			'label' => 'Média Atual',
+			'icon' => 'line-chart',
 			'value' => data_get($curriculum, 'kpis.display.avgGrade', '—'),
 			'subtitle' => '',
 			'subtitle_class' => 'text-slate-400',
@@ -26,6 +29,7 @@
 		],
 		[
 			'label' => 'ECTS Totais',
+			'icon' => 'layers',
 			'value' => data_get($curriculum, 'kpis.display.totalEcts', '0'),
 			'subtitle' => '',
 			'subtitle_class' => 'text-slate-400',
@@ -105,7 +109,10 @@
 				@foreach ($cards as $card)
 					<div class="min-w-full flex-shrink-0">
 						<div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-inner shadow-black/20 min-h-[120px] flex flex-col justify-between">
-							<div class="flex items-center gap-2 text-sm font-medium text-slate-200 uppercase tracking-wide">
+							<div class="flex items-center gap-2.5 text-sm font-medium text-slate-200 uppercase tracking-wide leading-tight">
+								@if (!empty($card['icon']))
+									<x-dynamic-component :component="'lucide-' . $card['icon']" class="w-4 h-4 text-sky-200" />
+								@endif
 								<span>{{ $card['label'] }}</span>
 							</div>
 							<div class="{{ $card['value_class'] ?? 'text-3xl font-semibold' }} mt-4">{{ $card['value'] }}</div>
@@ -152,7 +159,10 @@
 					<div
 							class="bg-slate-800 border border-slate-700 rounded-2xl p-4 min-w-[180px] sm:min-w-[200px] lg:min-w-[220px] snap-center
 								flex-shrink-0 xl:min-w-0 min-h-[120px] flex flex-col justify-between">
-						<div class="flex items-center gap-2 text-sm font-medium text-slate-200">
+						<div class="flex items-center gap-2.5 text-sm font-medium text-slate-200 leading-tight">
+							@if (!empty($card['icon']))
+								<x-dynamic-component :component="'lucide-' . $card['icon']" class="w-4 h-4 text-sky-200" />
+							@endif
 							<span>{{ $card['label'] }}</span>
 						</div>
 						<div class="{{ $card['value_class'] ?? 'text-3xl font-semibold' }} mt-3">{{ $card['value'] }}</div>

@@ -87,11 +87,14 @@
 
     @include('dashboard._cards')
 
-    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6 min-h-0 xl:grid-rows-[1fr_auto]">
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 xl:gap-6 mt-6 min-h-0 xl:grid-rows-[1fr_auto]">
         <section
-            class="xl:col-span-2 flex flex-col gap-4 min-h-0 h-auto md:h-96 xl:h-[420px] overflow-hidden
+            class="xl:col-span-2 flex flex-col min-h-0 h-auto md:h-96 xl:h-[420px] overflow-hidden
                 md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
-            <h2 class="font-semibold">Últimos Anúncios</h2>
+            <h2 class="font-semibold flex items-center gap-2.5 text-slate-100 leading-tight mb-4">
+                <x-lucide-megaphone class="w-5 h-5 text-sky-200" />
+                <span>Últimos Anúncios</span>
+            </h2>
             <x-announcement-list :items="$announcements"
                 class="flex-1 min-h-0 overflow-y-auto max-h-[16rem] md:max-h-[24rem] xl:max-h-none pr-0 md:pr-2 space-y-2
                     scrollbar-thin scrollbar-track-transparent
@@ -102,13 +105,16 @@
 
 
         <div
-            class="flex flex-col gap-4 xl:gap-6 w-full
+            class="flex flex-col gap-8 xl:gap-6 w-full
                 xl:col-span-1 xl:h-[420px]">
             <section
                 class="flex flex-col min-h-0 h-auto md:h-full overflow-hidden
                     xl:flex-1 md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
-                <div class="flex items-center justify-between mb-2 shrink-0">
-                    <h2 class="font-semibold">Próximas Aulas</h2>
+                <div class="flex items-center justify-between mb-4 shrink-0">
+                    <h2 class="font-semibold flex items-center gap-2.5 text-slate-100 leading-tight">
+                        <x-lucide-calendar-clock class="w-5 h-5 text-sky-200" />
+                        <span>Próximas Aulas</span>
+                    </h2>
                 </div>
 
                 <div class="flex-1 min-h-0">
@@ -119,8 +125,11 @@
             <section
                 class="flex flex-col min-h-0 h-auto md:h-full overflow-hidden
                     xl:flex-1 md:bg-slate-800 md:border md:border-slate-700 md:rounded-2xl md:p-5">
-                <div class="flex items-center justify-between mb-2 shrink-0">
-                    <h2 class="font-semibold">Próximas Avaliações</h2>
+                <div class="flex items-center justify-between mb-4 shrink-0">
+                    <h2 class="font-semibold flex items-center gap-2.5 text-slate-100 leading-tight">
+                        <x-lucide-clipboard-list class="w-5 h-5 text-sky-200" />
+                        <span>Próximas Avaliações</span>
+                    </h2>
                 </div>
 
                 <div class="flex-1 min-h-0">
@@ -131,7 +140,10 @@
 
         <section class="xl:col-span-3 mt-0">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="font-semibold">Disciplinas Inscritas</h2>
+                <h2 class="font-semibold flex items-center gap-2.5 text-slate-100 leading-tight">
+                    <x-lucide-book-open-check class="w-5 h-5 text-sky-200" />
+                    <span>Disciplinas Inscritas</span>
+                </h2>
             </div>
             @include('dashboard._current_courses')
         </section>
