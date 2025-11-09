@@ -101,9 +101,7 @@ final class CurriculumKpisVM
 
 		if ($pendingCount <= 0) {
 			return [
-				'value' => 'Sem pendências',
-				'subtitle' => 'Pagamentos regularizados',
-				'subtitleClass' => 'text-emerald-400',
+				'value' => 'Pagamentos regularizados',
 				'link' => null,
 			];
 		}

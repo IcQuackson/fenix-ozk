@@ -31,8 +31,6 @@ final class PersonService
             fn () => $this->fenix->getPerson($userId)
         );
 
-        Log::debug('Fenix API person response', ['raw' => $raw]);
-
         return is_array($raw) ? Person::fromApi($raw) : null;
     }
 
@@ -128,9 +126,6 @@ final class PersonService
             now()->addMinutes(5),
             fn () => $this->fenix->getPersonCurriculum($userId)
         );
-
-        // Optional debug logging (keeps parity with your other method)
-        Log::debug('Fenix API curriculum response', ['raw' => $raw]);
 
         $collection = CurriculumCollection::fromApi(is_array($raw) ? $raw : []);
 
