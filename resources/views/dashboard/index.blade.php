@@ -20,47 +20,43 @@
         </div>
 
         {{-- Right: personal info --}}
-        <div class="w-full lg:w-64" x-data="{ open: false }">
-            <button
-                type="button"
-                class="lg:hidden w-full flex items-center justify-between bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200"
-                @click="open = !open">
-                <span>Ver informação pessoal</span>
-                <x-lucide-chevron-down :class="{ 'rotate-180': open }" class="w-4 h-4 text-slate-400 transition-transform" />
-            </button>
+        <div class="w-full lg:w-64">
+            <details
+                class="lg:hidden group bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-200 overflow-hidden">
+                <summary
+                    class="flex w-full items-center justify-between px-4 py-3 cursor-pointer list-none">
+                    <span>Ver informação pessoal</span>
+                    <x-lucide-chevron-down class="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180" />
+                </summary>
+                <div class="border-t border-slate-700 px-4 py-4 space-y-2 leading-relaxed">
+                    @if (!empty($personalInfo['username']))
+                        <div class="flex items-center gap-2">
+                            <x-lucide-user class="w-4 h-4 text-slate-400" />
+                            <span>{{ $personalInfo['username'] }}</span>
+                        </div>
+                    @endif
+                    @if (!empty($personalInfo['institutionalEmail']))
+                        <div class="flex items-center gap-2">
+                            <x-lucide-mail class="w-4 h-4 text-slate-400" />
+                            <span>{{ $personalInfo['institutionalEmail'] }}</span>
+                        </div>
+                    @endif
+                    @if (!empty($personalInfo['campus']))
+                        <div class="flex items-center gap-2">
+                            <x-lucide-map-pin class="w-4 h-4 text-slate-400" />
+                            <span>{{ $personalInfo['campus'] }}</span>
+                        </div>
+                    @endif
+                    @if (!empty($curriculum['degree']['acronym']))
+                        <div class="flex items-center gap-2">
+                            <x-lucide-graduation-cap class="w-4 h-4 text-slate-400" />
+                            <span>{{ $curriculum['degree']['acronym'] }}</span>
+                        </div>
+                    @endif
+                </div>
+            </details>
 
             <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 text-sm text-slate-200 space-y-2 hidden lg:block leading-relaxed">
-                @if (!empty($personalInfo['username']))
-                    <div class="flex items-center gap-2">
-                        <x-lucide-user class="w-4 h-4 text-slate-400" />
-                        <span>{{ $personalInfo['username'] }}</span>
-                    </div>
-                @endif
-                @if (!empty($personalInfo['institutionalEmail']))
-                    <div class="flex items-center gap-2">
-                        <x-lucide-mail class="w-4 h-4 text-slate-400" />
-                        <span>{{ $personalInfo['institutionalEmail'] }}</span>
-                    </div>
-                @endif
-                @if (!empty($personalInfo['campus']))
-                    <div class="flex items-center gap-2">
-                        <x-lucide-map-pin class="w-4 h-4 text-slate-400" />
-                        <span>{{ $personalInfo['campus'] }}</span>
-                    </div>
-                @endif
-                @if (!empty($curriculum['degree']['acronym']))
-                    <div class="flex items-center gap-2">
-                        <x-lucide-graduation-cap class="w-4 h-4 text-slate-400" />
-                        <span>{{ $curriculum['degree']['acronym'] }}</span>
-                    </div>
-                @endif
-            </div>
-
-            <div
-                class="bg-slate-800 border border-slate-700 rounded-xl p-5 text-sm text-slate-200 space-y-2 mt-3 lg:mt-0 lg:hidden leading-relaxed"
-                x-cloak
-                x-show="open"
-                x-transition>
                 @if (!empty($personalInfo['username']))
                     <div class="flex items-center gap-2">
                         <x-lucide-user class="w-4 h-4 text-slate-400" />
