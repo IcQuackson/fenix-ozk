@@ -35,31 +35,34 @@
                 </div>
                 <button class="md:hidden p-2 text-slate-300" @click="sidebarOpen=false">✕</button>
             </div>
+            @php
+                $comingSoonClasses = 'flex items-center justify-between rounded-lg px-3 py-2 border border-slate-800 bg-slate-900 text-slate-500 pointer-events-none opacity-70';
+            @endphp
             <nav class="flex-1 space-y-1 text-slate-200">
                 <a href="{{ route('dashboard') }}"
                     class="block rounded-lg px-3 py-2 transition-colors {{ request()->routeIs('dashboard') ? 'bg-sky-500/10 text-sky-300 border border-sky-500/20' : 'border border-transparent hover:bg-slate-800 hover:border-slate-700' }}">
                     Dashboard
                 </a>
-                <a href="#"
-                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
-                    Informação Pessoal
-                </a>
-                <a href="#"
-                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
-                    Curricular
-                </a>
-                <a href="#"
-                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
-                    Avaliações
-                </a>
-                <a href="#"
-                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
-                    Horário
-                </a>
-                <a href="#"
-                    class="block rounded-lg px-3 py-2 border border-transparent transition-colors hover:bg-slate-800 hover:border-slate-700">
-                    Pagamentos
-                </a>
+                <div class="{{ $comingSoonClasses }}" aria-disabled="true">
+                    <span>Informação Pessoal</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-slate-800 rounded-full px-2 py-0.5 whitespace-nowrap">em breve</span>
+                </div>
+                <div class="{{ $comingSoonClasses }}" aria-disabled="true">
+                    <span>Curricular</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-slate-800 rounded-full px-2 py-0.5 whitespace-nowrap">em breve</span>
+                </div>
+                <div class="{{ $comingSoonClasses }}" aria-disabled="true">
+                    <span>Avaliações</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-slate-800 rounded-full px-2 py-0.5 whitespace-nowrap">em breve</span>
+                </div>
+                <div class="{{ $comingSoonClasses }}" aria-disabled="true">
+                    <span>Horário</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-slate-800 rounded-full px-2 py-0.5 whitespace-nowrap">em breve</span>
+                </div>
+                <div class="{{ $comingSoonClasses }}" aria-disabled="true">
+                    <span>Pagamentos</span>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400 bg-slate-800 rounded-full px-2 py-0.5 whitespace-nowrap">em breve</span>
+                </div>
             </nav>
             <form method="POST" action="{{ route('logout') }}"
                 class="mt-6 border-t border-slate-800 pt-4">
